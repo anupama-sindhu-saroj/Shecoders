@@ -9,7 +9,6 @@ const SignInForm = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Handle normal login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -20,13 +19,11 @@ const SignInForm = () => {
         password,
       });
 
-      // ✅ Ensure token received
       if (!res.data.token) {
         setError("Login failed: No token received from server");
         return;
       }
 
-      // ✅ Save token in localStorage
       localStorage.setItem("token", res.data.token);
       console.log("✅ Login success:", res.data);
 
@@ -38,7 +35,7 @@ const SignInForm = () => {
     }
   };
 
-  // ✅ Handle Google login
+
   const handleGoogleLogin = () => {
     window.open("http://localhost:5001/api/auth/google", "_self");
   };
@@ -73,7 +70,6 @@ const SignInForm = () => {
         </button>
       </form>
 
-      {/* Forgot Password */}
       <div className={styles.formFooter}>
         <Link to="/forgot-password" className={styles.forgotPasswordLink}>
           Forgot your password?
@@ -82,7 +78,6 @@ const SignInForm = () => {
 
       <div className={styles.divider}>OR</div>
 
-      {/* Google Sign-In Button */}
       <button onClick={handleGoogleLogin} className={styles.googleBtn}>
         <img
           src="https://developers.google.com/identity/images/g-logo.png"

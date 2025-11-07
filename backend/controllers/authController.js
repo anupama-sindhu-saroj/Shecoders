@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// ✅ SEND OTP
 export const sendOtp = async (req, res) => {
   const { email } = req.body;
   try {
@@ -25,12 +24,11 @@ export const sendOtp = async (req, res) => {
 
     res.json({ message: "OTP sent to email" });
   } catch (err) {
-    console.error("❌ OTP Error:", err);
+    console.error(" OTP Error:", err);
     res.status(500).json({ message: "Failed to send OTP" });
   }
 };
 
-// ✅ VERIFY OTP
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   try {
@@ -49,7 +47,6 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
-// ✅ REGISTER
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -66,7 +63,6 @@ export const register = async (req, res) => {
   }
 };
 
-// ✅ LOGIN
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -83,7 +79,6 @@ export const login = async (req, res) => {
   }
 };
 
-// ✅ FORGOT PASSWORD
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -101,12 +96,11 @@ export const forgotPassword = async (req, res) => {
 
     res.status(200).json({ message: "Reset link sent to your email" });
   } catch (err) {
-    console.error("❌ Forgot password error:", err);
+    console.error(" Forgot password error:", err);
     res.status(500).json({ message: "Error sending reset link" });
   }
 };
 
-// ✅ RESET PASSWORD
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;

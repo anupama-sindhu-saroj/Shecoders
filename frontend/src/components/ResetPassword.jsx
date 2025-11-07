@@ -12,11 +12,11 @@ const ResetPassword = () => {
     e.preventDefault();
     try {
       await axios.post(`http://localhost:5001/api/auth/reset-password/${token}`, { password });
-      setMsg("✅ Password reset successful");
+      setMsg("Password reset successful");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       console.error(err);
-      setMsg("❌ Error resetting password");
+      setMsg("Error resetting password");
     }
   };
 

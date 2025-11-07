@@ -20,7 +20,7 @@ router.post("/login", login);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 
-// ✅ Google Sign-In
+
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"], prompt: "select_account" })

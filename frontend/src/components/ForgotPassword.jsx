@@ -11,10 +11,10 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:5001/api/auth/forgot-password", { email });
-      setMsg("✅ Reset link sent to your email");
+      setMsg("Reset link sent to your email");
     } catch (err) {
       console.error(err);
-      setMsg("❌ Error sending reset link");
+      setMsg("Error sending reset link");
     }
   };
 
