@@ -1,68 +1,38 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+import React, { useState } from "react";
+import axios from "axios";
+import "./ForgotPassword.css";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState("");
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5001/api/auth/forgot-password", { email });
+      setMsg("✅ Reset link sent to your email");
+    } catch (err) {
+      console.error(err);
+      setMsg("❌ Error sending reset link");
+    }
+  };
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+  return (
+    <div className="form-container">
+      <h2>Forgot Password</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Enter your email"
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <button type="submit">Send Reset Link</button>
+      </form>
+      <p>{msg}</p>
+    </div>
+  );
+};
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
+export default ForgotPassword;
