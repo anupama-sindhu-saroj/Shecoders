@@ -4,17 +4,14 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthContainer from "./components/AuthContainer/AuthContainer";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+import Dashboard from "./pages/Dashboard"; // ✅ Added import
 import "./index.css";
-import SignUpForm from "./components/SignUpForm";
 
 function App() {
   return (
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
       <Router>
         <Routes>
-          {/* Landing Page */}
-          {/* Landing Page is now default */}
-         
           {/* Main login/signup page */}
           <Route path="/" element={<AuthContainer />} />
 
@@ -23,9 +20,9 @@ function App() {
 
           {/* Reset password page */}
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-     
 
-         
+          {/* ✅ New Dashboard page */}
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>
