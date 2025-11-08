@@ -1,25 +1,24 @@
 import mongoose from "mongoose";
 
-const submissionSchema = mongoose.Schema({
+const answerSchema = new mongoose.Schema({
+  questionId: { type: mongoose.Schema.Types.ObjectId, required: true },
+  selectedOptions: [String], // for single/multiple choice
+  trueFalseValue: { type: Boolean, default: null }, // for true/false
+  shortAnswer: { type: String, default: "" }, // for short type
+  isCorrect: { type: Boolean, default: false },
+  pointsAwarded: { type: Number, default: 0 },
+});
+
+const submissionSchema = new mongoose.Schema({
   quizId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz", required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
   userName: { type: String, required: true },
-  answers: [
-    {
-      questionId: { type: mongoose.Schema.Types.ObjectId, required: true },
-      selectedOptions: [String],
-      trueFalseValue: Boolean,
-      shortAnswer: String,
-      isCorrect: Boolean,
-      pointsAwarded: Number
-    }
-  ],
-  totalScore: Number,
-  maxScore: Number,
-  timeTaken: Number,
-  submittedAt: { type: Date, default: Date.now }
+  answers: [answerSchema],
+  totalScore: { type: Number, default: 0 },
+  maxScore: { type: Number, default: 0 },
+  submittedAt: { type: Date, default: Date.now },
+  timeTaken: { type: Number, default: 0 }, // in seconds (optional)
 });
 
 const Submission = mongoose.model("Submission", submissionSchema);
-
 export default Submission;

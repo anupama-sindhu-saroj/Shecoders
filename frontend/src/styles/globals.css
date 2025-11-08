@@ -7,7 +7,12 @@
   --dark-bg: #0d1117;
   --card-bg: #161b22;
 }
-
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--dark-bg);
