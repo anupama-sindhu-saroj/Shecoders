@@ -101,4 +101,28 @@ router.get("/:id", protect, async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const quiz = await Quiz.findById(req.params.id);
+    if (!quiz) return res.status(404).json({ success: false, error: "Quiz not found" });
+
+    // If quiz is published or user is creator
+    const token = req.headers.authorization?.split(" ")[1];
+    let userId = null;
+    if (token) {
+      // Decode token (use your auth middleware or JWT decode)
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.id;
+    }
+
+    if (quiz.status !== "published" && quiz.createdBy.toString() !== userId) {
+      return res.status(403).json({ success: false, error: "This quiz is private" });
+    }
+
+    res.json({ success: true, quiz });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
 export default router;

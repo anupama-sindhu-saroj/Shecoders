@@ -57,7 +57,10 @@ export const register = async (req, res) => {
     const newUser = new User({ name, email, password: hashed });
     await newUser.save();
 
-    res.json({ message: "User registered successfully" });
+    res.json({ 
+      message: "User registered successfully",
+      user: { _id: newUser._id, name: newUser.name } // ✅ send user object
+    });
   } catch {
     res.status(500).json({ message: "Error registering user" });
   }
@@ -72,8 +75,11 @@ export const login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ message: "Login successful", token });
+    const token = jwt.sign({ id: user._id, name: user.name}, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.json({ message: "Login successful", token,user: {
+      _id: user._id,
+      name: user.name
+    } });
   } catch {
     res.status(500).json({ message: "Error logging in" });
   }

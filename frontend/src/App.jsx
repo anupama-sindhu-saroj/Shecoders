@@ -8,6 +8,9 @@ import Dashboard from "./pages/Dashboard"; // ✅ Added import
 import LandingPage from "./pages/LandingPage";
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
+import QuizApp from "./components/QuizApp.jsx";
+import Myapp from "./Myapp.jsx";
+import ResultPage from "./components/ResultPage.jsx";
 import "./index.css";
 
 function App() {
@@ -22,7 +25,10 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
            <Route path="/create-quiz" element={<CreateQuiz />} />
            
-          <Route path="/dashboard" element={<Dashboard />} />
+           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/quiz/:quizId" element={<Myapp />} />
+          <Route path="/quiz/:quizId/attempt" element={<QuizApp />} />
+          <Route path="/result" element={<ResultPage />} />
           <Route path="/preview" element={<PreviewQuiz />} />
         </Routes>
       </Router>
