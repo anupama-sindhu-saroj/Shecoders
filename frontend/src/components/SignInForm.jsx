@@ -25,12 +25,12 @@ const SignInForm = () => {
       }
 
       localStorage.setItem("token", res.data.token);
-      console.log("✅ Login success:", res.data);
+      console.log("Login success:", res.data);
 
-      alert("✅ Login successful! Redirecting to dashboard...");
+      alert("Login successful! Redirecting to dashboard...");
       return navigate("/dashboard");
     } catch (err) {
-      console.error("❌ Login error:", err.response?.data || err.message);
+      console.error("Login error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Invalid email or password");
     }
   };
