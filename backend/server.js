@@ -5,7 +5,7 @@ import session from "express-session";
 import passport from "passport";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
-
+import submissionRoutes from "./routes/submissionRoutes.js";
 
 
 dotenv.config();
@@ -34,7 +34,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
-
+app.use("/api/submissions", submissionRoutes);
 
 
 const PORT = process.env.PORT || 5001;
