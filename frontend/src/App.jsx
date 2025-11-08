@@ -5,7 +5,7 @@ import AuthContainer from "./components/AuthContainer/AuthContainer";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import Dashboard from "./pages/Dashboard"; // ✅ Added import
-
+import LandingPage from "./pages/LandingPage";
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
 import "./index.css";
