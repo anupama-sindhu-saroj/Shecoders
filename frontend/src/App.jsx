@@ -8,6 +8,8 @@ import Dashboard from "./pages/Dashboard"; // ✅ Added import
 import LandingPage from './pages/LandingPage';
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
+import QuizAnalytics from "./pages/QuizAnalytics";
+import ResultPage from "./pages/ResultPage";
 import "./index.css";
 
 function App() {
@@ -24,6 +26,10 @@ function App() {
            
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/preview" element={<PreviewQuiz />} />
+          <Route path="/analytics/:quizId" element={<QuizAnalytics />} />
+          <Route path="/result/:quizId/:attemptId" element={<ResultPage />} />
+          
+
         </Routes>
       </Router>
     </GoogleOAuthProvider>

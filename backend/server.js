@@ -7,6 +7,11 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 
 import quizRoutes from "./routes/quizRoutes.js";
+import resultRoutes from "./routes/resultRoutes.js";
+
+
+
+
 
 
 
@@ -39,6 +44,8 @@ app.use(passport.session());
 app.use("/api/auth", authRoutes);
 
 app.use("/api/quizzes", quizRoutes);
+app.use("/api/results", resultRoutes);
+
 
 
 console.log("✅ Quiz routes mounted at /api/quizzes");
