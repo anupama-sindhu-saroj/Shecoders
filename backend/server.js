@@ -5,7 +5,6 @@ import session from "express-session";
 import passport from "passport";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
-
 import quizRoutes from "./routes/quizRoutes.js";
 
 
@@ -37,7 +36,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/quizzes", quizRoutes);
 
 
