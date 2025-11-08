@@ -119,7 +119,7 @@ export default function App() {
         <main className="flex-grow">
           {/* Hero Section - bg-gray-800 */}
           <section className="bg-gray-800">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-0 md:py-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 {/* Hero Text - text-gray-50 */}
                 <div className="text-center md:text-left">
@@ -138,7 +138,7 @@ export default function App() {
                   </div>
                 </div>
                 {/* Hero Illustration */}
-                <div className="hidden md:block" style={{ transform: 'translateY(-111px)' }}>
+                <div className="hidden md:block" style={{ transform: 'translateY(-70px) scale(0.9)' }}>
                   <HeroIllustration />
                 </div>
               </div>
