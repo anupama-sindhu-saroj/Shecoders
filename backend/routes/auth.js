@@ -8,7 +8,7 @@ import {
   login,
   forgotPassword,
   resetPassword,
-} from "./controllers/authController.js";
+} from "../controllers/authController.js";
 import "../config/passport.js";
 
 const router = express.Router();

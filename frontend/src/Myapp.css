@@ -1,0 +1,19 @@
+/* Myapp.css */
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: none; /* ensure no outer color shows */
+  }
+  
+  .quiz-bg {
+    background-color: #0a0f1e;
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    border: none;
+    overflow: hidden; /* avoids any scrollbar or extra spacing */
+  }
+  
