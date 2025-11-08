@@ -15,8 +15,8 @@ function App() {
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
       <Router>
         <Routes>
-         
-          <Route path="/" element={<AuthContainer />} />
+         <Route path="/" element={<LandingPage />} />
+          <Route path="/auth" element={<AuthContainer />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           <Route path="/reset-password/:token" element={<ResetPassword />} />
