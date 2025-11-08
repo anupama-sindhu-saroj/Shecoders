@@ -6,6 +6,9 @@ import passport from "passport";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import submissionRoutes from "./routes/submissionRoutes.js";
+import quizRoutes from "./routes/quizRoutes.js";
+
+
 
 
 dotenv.config();
@@ -35,7 +38,10 @@ app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/submissions", submissionRoutes);
+app.use("/api/quizzes", quizRoutes);
 
+
+console.log("✅ Quiz routes mounted at /api/quizzes");
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
