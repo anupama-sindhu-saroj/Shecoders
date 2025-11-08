@@ -4,8 +4,13 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthContainer from "./components/AuthContainer/AuthContainer";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+<<<<<<< HEAD
 import Dashboard from "./pages/Dashboard"; 
 import LandingPage from "./pages/LandingPage";
+=======
+import Dashboard from "./pages/Dashboard"; // ✅ Added import
+import LandingPage from './pages/LandingPage';
+>>>>>>> b2937b06f86ba4c5086d2147596c280dd2127b22
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
 import "./index.css";
