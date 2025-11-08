@@ -39,7 +39,7 @@ const SignInForm = () => {
     alert("✅ Login successful! Redirecting to dashboard...");
     navigate("/dashboard");
     } catch (err) {
-      console.error("❌ Login error:", err.response?.data || err.message);
+      console.error("Login error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Invalid email or password");
     }
   };

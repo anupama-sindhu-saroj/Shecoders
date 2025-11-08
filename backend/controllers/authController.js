@@ -1,20 +1,26 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import Otp from "../models/Otp.js"; // ✅ new model
 import { sendEmail } from "../utils/sendEmail.js";
 import dotenv from "dotenv";
-
 dotenv.config();
 
+// ✅ SEND OTP (no user creation)
 export const sendOtp = async (req, res) => {
   const { email } = req.body;
   try {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    let user = await User.findOne({ email });
-    if (!user) user = new User({ email });
-    user.otp = otp;
-    user.otpExpires = Date.now() + 5 * 60 * 1000;
-    await user.save();
+
+    // Remove any old OTPs
+    await Otp.deleteMany({ email });
+
+    // Save new OTP
+    await Otp.create({
+      email,
+      otp,
+      otpExpires: Date.now() + 5 * 60 * 1000,
+    });
 
     await sendEmail(
       email,
@@ -22,35 +28,35 @@ export const sendOtp = async (req, res) => {
       `<h3>Your OTP Code: <b>${otp}</b></h3><p>Valid for 5 minutes.</p>`
     );
 
-    res.json({ message: "OTP sent to email" });
+    res.json({ message: "OTP sent successfully" });
   } catch (err) {
-    console.error(" OTP Error:", err);
+    console.error("❌ OTP Error:", err);
     res.status(500).json({ message: "Failed to send OTP" });
   }
 };
 
+// ✅ VERIFY OTP
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   try {
-    const user = await User.findOne({ email });
-    if (!user || user.otp !== otp || user.otpExpires < Date.now()) {
+    const record = await Otp.findOne({ email, otp });
+    if (!record || record.otpExpires < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    user.otp = null;
-    user.otpExpires = null;
-    await user.save();
-
+    await Otp.deleteMany({ email });
     res.json({ message: "OTP verified" });
-  } catch {
+  } catch (err) {
+    console.error("❌ Verify OTP Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
+// ✅ REGISTER
 export const register = async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    let existing = await User.findOne({ email });
+    const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: "Email already exists" });
 
     const hashed = await bcrypt.hash(password, 10);
@@ -66,6 +72,7 @@ export const register = async (req, res) => {
   }
 };
 
+// ✅ LOGIN
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -85,6 +92,7 @@ export const login = async (req, res) => {
   }
 };
 
+// ✅ FORGOT PASSWORD
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   try {
@@ -97,16 +105,20 @@ export const forgotPassword = async (req, res) => {
     await sendEmail(
       email,
       "Password Reset Link",
-      `<h3>Password Reset Request</h3><p>Click below to reset your password:</p><a href="${resetLink}" target="_blank">${resetLink}</a><p>This link expires in 15 minutes.</p>`
+      `<h3>Password Reset Request</h3>
+       <p>Click below to reset your password:</p>
+       <a href="${resetLink}" target="_blank">${resetLink}</a>
+       <p>This link expires in 15 minutes.</p>`
     );
 
-    res.status(200).json({ message: "Reset link sent to your email" });
+    res.json({ message: "Reset link sent to your email" });
   } catch (err) {
-    console.error(" Forgot password error:", err);
+    console.error("❌ Forgot Password Error:", err);
     res.status(500).json({ message: "Error sending reset link" });
   }
 };
 
+// ✅ RESET PASSWORD
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
@@ -119,8 +131,9 @@ export const resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(password, 10);
     await user.save();
 
-    res.status(200).json({ message: "Password reset successful" });
-  } catch {
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("❌ Reset Password Error:", err);
     res.status(400).json({ message: "Invalid or expired token" });
   }
 };

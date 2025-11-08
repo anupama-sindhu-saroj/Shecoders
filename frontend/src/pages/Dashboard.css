@@ -1,7 +1,7 @@
 :root {
-    /* Updated background color to match the deep dark background of the image */
-    --bg-dark: #121621; /* Deep Dark Blue/Gray */
-    --card-dark: #1f2533; /* Slightly lighter for cards */
+   
+    --bg-dark: #121621;
+    --card-dark: #1f2533; 
     --text-light: #f0f0f0;
     
     /* Using two distinct neon colors from the image (Blue and Green) */
