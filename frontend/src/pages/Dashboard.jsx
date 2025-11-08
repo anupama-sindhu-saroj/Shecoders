@@ -80,7 +80,7 @@ const Dashboard = () => {
 
             <div className="summary-and-cards">
               <div className="quiz-card summary-card">
-                <span className="icon-placeholder">✅</span>
+                <span className="icon-placeholder"></span>
                 <h3>Activity Summary</h3>
                 <p>
                   Total Quizzes: <strong>{quizzes.length}</strong>
@@ -95,7 +95,7 @@ const Dashboard = () => {
               ============================== */}
               {drafts.length > 0 && (
                 <>
-                  <h2 style={{ color: "#00eaff", marginTop: "30px" }}>📝 Drafts</h2>
+                  <h2 style={{ color: "#00eaff", marginTop: "30px" }}>Drafts</h2>
                   {drafts.map((quiz) => (
                     <div className="quiz-card" key={quiz._id}>
                       <h3>{quiz.title}</h3>
@@ -109,7 +109,7 @@ const Dashboard = () => {
                           className="card-btn edit-btn"
                           onClick={() => navigate(`/create-quiz?draftId=${quiz._id}`)}
                         >
-                          ✏️ Edit
+                          Edit
                         </button>
                       </div>
                     </div>
@@ -122,7 +122,7 @@ const Dashboard = () => {
               ============================== */}
               {published.length > 0 && (
                 <>
-                  <h2 style={{ color: "#00ff88", marginTop: "30px" }}>🌐 Published</h2>
+                  <h2 style={{ color: "#00ff88", marginTop: "30px" }}>Published</h2>
                   {published.map((quiz) => (
                     <div className="quiz-card" key={quiz._id}>
                       <h3>{quiz.title}</h3>
@@ -140,7 +140,7 @@ const Dashboard = () => {
                             alert(`✅ Quiz link copied!\n${quizLink}`);
                           }}
                         >
-                          📋 Copy Link
+                          Copy Link
                         </button>
                       </div>
                     </div>
