@@ -4,10 +4,13 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthContainer from "./components/AuthContainer/AuthContainer";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
+<<<<<<< HEAD
 import Dashboard from "./pages/Dashboard"; // ✅ Added import
 import LandingPage from "./pages/LandingPage";
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
+=======
+>>>>>>> f35a161 (not visible)
 import "./index.css";
 
 function App() {
