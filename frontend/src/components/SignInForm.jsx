@@ -9,36 +9,41 @@ const SignInForm = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Handle normal login
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post("http://localhost:5001/api/auth/login", {
-      email,
-      password,
-    });
+    e.preventDefault();
+    setError("");
 
-    // ✅ Store JWT token for all future requests
-    localStorage.setItem("token", res.data.token);
+    try {
+      const res = await axios.post("http://localhost:5001/api/auth/login", {
+        email,
+        password,
+      });
 
-    console.log("✅ Login success:", res.data);
-    navigate("/dashboard");
-  } catch (err) {
-    console.error("❌ Login error:", err.response?.data || err.message);
-    setError("Invalid email or password");
-  }
-};
+      if (!res.data.token) {
+        setError("Login failed: No token received from server");
+        return;
+      }
+
+      localStorage.setItem("token", res.data.token);
+      console.log("✅ Login success:", res.data);
+
+      alert("✅ Login successful! Redirecting to dashboard...");
+      return navigate("/dashboard");
+    } catch (err) {
+      console.error("❌ Login error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Invalid email or password");
+    }
+  };
 
 
-  // ✅ Handle Google login
-const handleGoogleLogin = () => {
-  window.open("http://localhost:5001/api/auth/google", "_self");
-};
-
+  const handleGoogleLogin = () => {
+    window.open("http://localhost:5001/api/auth/google", "_self");
+  };
 
   return (
     <div className={styles.formBox}>
       <h2>Sign In</h2>
+
       <form onSubmit={handleSubmit}>
         <input
           className={styles.inputField}
@@ -65,7 +70,6 @@ const handleGoogleLogin = () => {
         </button>
       </form>
 
-      {/* Forgot Password */}
       <div className={styles.formFooter}>
         <Link to="/forgot-password" className={styles.forgotPasswordLink}>
           Forgot your password?
@@ -74,7 +78,6 @@ const handleGoogleLogin = () => {
 
       <div className={styles.divider}>OR</div>
 
-      {/* Google Sign-In Button */}
       <button onClick={handleGoogleLogin} className={styles.googleBtn}>
         <img
           src="https://developers.google.com/identity/images/g-logo.png"

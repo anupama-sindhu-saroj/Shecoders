@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --neon-glow: 0 0 5px #22d3ee, 0 0 10px #22d3ee, 0 0 20px #22d3ee, 0 0 40px rgba(34, 211, 238, 0.5);
+  --dark-bg: #0d1117;
+  --card-bg: #161b22;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--dark-bg);
+  color: #ffffff;
+}
+html, body, #root {
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.nav-link:hover {
+  color: #22d3ee;
+  text-shadow: var(--neon-glow);
+  transition: all 0.3s ease;
+}
+

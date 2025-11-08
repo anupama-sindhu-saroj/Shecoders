@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "./AuthContainer/AuthContainer.module.css";
 
+
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -22,9 +23,9 @@ const SignUpForm = () => {
       const data = await res.json();
       if (res.ok) {
         setIsOTPSent(true);
-        setMessage("✅ OTP sent to your email!");
+        setMessage("OTP sent to your email!");
       } else {
-        setMessage(`❌ ${data.message}`);
+        setMessage(` ${data.message}`);
       }
     } catch (err) {
       setMessage("Server error. Try again.");
@@ -42,9 +43,9 @@ const SignUpForm = () => {
       const data = await res.json();
       if (res.ok) {
         setIsVerified(true);
-        setMessage("✅ Email verified! You can now set your password.");
+        setMessage("Email verified! You can now set your password.");
       } else {
-        setMessage(`❌ ${data.message}`);
+        setMessage(`${data.message}`);
       }
     } catch (err) {
       setMessage("Server error. Try again.");
@@ -68,7 +69,7 @@ const SignUpForm = () => {
         setName("");
         setPassword("");
       } else {
-        setMessage(`❌ ${data.message}`);
+        setMessage(`${data.message}`);
       }
     } catch (err) {
       setMessage("Server error. Try again.");
