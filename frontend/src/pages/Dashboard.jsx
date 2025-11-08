@@ -8,8 +8,10 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("myQuizzes");
   const [showModal, setShowModal] = useState(false);
   const [quizzes, setQuizzes] = useState([]);
+  const [quizCode, setQuizCode] = useState("");
+  const [attemptedQuizzes, setAttemptedQuizzes] = useState([]);
   const navigate = useNavigate();
-
+  const totalAttempts = attemptedQuizzes.length;
   // ✅ Fetch quizzes when page loads
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -26,8 +28,40 @@ const Dashboard = () => {
     };
     fetchQuizzes();
   }, []);
+  useEffect(() => {
+    const fetchAttempts = async () => {
+      const token = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const userId = user?._id; // safely get the ID
+      console.log("Frontend userId:", userId);
+      if (!userId) return;
   
-
+      const res = await fetch(`http://localhost:5001/api/submissions/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      const data = await res.json();
+      console.log("Submissions fetched:", data); 
+      setAttemptedQuizzes(Array.isArray(data) ? data : []);
+    };
+  
+    fetchAttempts();
+  }, []);
+  
+  useEffect(() => {
+    console.log("attemptedQuizzes:", attemptedQuizzes);
+  }, [attemptedQuizzes]);
+  
+  const handleJoinQuiz = () => {
+    if (!quizCode) return alert("Enter quiz ID or code!");
+  
+    // If user pasted full URL, extract the ID
+    const id = quizCode.includes("http")
+      ? quizCode.split("/").pop() // take last part of URL
+      : quizCode;
+  
+    navigate(`/quiz/${id}`);
+  };
   // ✅ Separate quizzes into Drafts and Published
   const drafts = quizzes.filter((q) => q.status === "draft");
   const published = quizzes.filter((q) => q.status === "published");
@@ -80,13 +114,13 @@ const Dashboard = () => {
 
             <div className="summary-and-cards">
               <div className="quiz-card summary-card">
-                <span className="icon-placeholder">✅</span>
+                <span className="icon-placeholder"></span>
                 <h3>Activity Summary</h3>
                 <p>
                   Total Quizzes: <strong>{quizzes.length}</strong>
                 </p>
                 <p>
-                  Total Attempts: <strong>345</strong>
+                  Total Attempts: <strong>{totalAttempts}</strong>
                 </p>
               </div>
 
@@ -95,7 +129,7 @@ const Dashboard = () => {
               ============================== */}
               {drafts.length > 0 && (
                 <>
-                  <h2 style={{ color: "#00eaff", marginTop: "30px" }}>📝 Drafts</h2>
+                  <h2 style={{ color: "#00eaff", marginTop: "30px" }}>Drafts</h2>
                   {drafts.map((quiz) => (
                     <div className="quiz-card" key={quiz._id}>
                       <h3>{quiz.title}</h3>
@@ -109,7 +143,7 @@ const Dashboard = () => {
                           className="card-btn edit-btn"
                           onClick={() => navigate(`/create-quiz?draftId=${quiz._id}`)}
                         >
-                          ✏️ Edit
+                          Edit
                         </button>
                       </div>
                     </div>
@@ -122,7 +156,7 @@ const Dashboard = () => {
               ============================== */}
               {published.length > 0 && (
                 <>
-                  <h2 style={{ color: "#00ff88", marginTop: "30px" }}>🌐 Published</h2>
+                  <h2 style={{ color: "#00ff88", marginTop: "30px" }}>Published</h2>
                   {published.map((quiz) => (
                     <div className="quiz-card" key={quiz._id}>
                       <h3>{quiz.title}</h3>
@@ -140,7 +174,7 @@ const Dashboard = () => {
                             alert(`✅ Quiz link copied!\n${quizLink}`);
                           }}
                         >
-                          📋 Copy Link
+                          Copy Link
                         </button>
                       </div>
                     </div>
@@ -176,19 +210,42 @@ const Dashboard = () => {
                 </p>
               </div>
 
-              <div className="quiz-card attempted-card">
-                <h3>Digital Marketing Fundamentals</h3>
-                <div className="stats">
-                  <p>
-                    Your Score: <strong>9/10 (90%)</strong>
-                  </p>
-                  <p>Attempt Date: 2025-11-05</p>
-                </div>
-                <span className="status attempted-success">Completed</span>
-                <div className="card-actions">
-                  <button className="card-btn analytics-btn">View Report</button>
-                </div>
-              </div>
+              {attemptedQuizzes.length > 0 ? (
+  attemptedQuizzes.map(sub => {
+    const quiz = sub.quizId;
+    return (
+      <div className="quiz-card attempted-card" key={sub._id}>
+        <h3>{quiz?.title || "Deleted Quiz"}</h3>
+        <div className="stats">
+          <p>
+            Your Score: 
+            <strong>
+              {sub.totalScore}/{sub.maxScore} (
+              {sub.maxScore ? Math.round((sub.totalScore / sub.maxScore) * 100) : 0}%)
+            </strong>
+          </p>
+          <p>Attempt Date: {new Date(sub.submittedAt).toLocaleDateString()}</p>
+        </div>
+        <span className="status attempted-success">Completed</span>
+        <div className="card-actions">
+          <button
+            className="card-btn analytics-btn"
+            onClick={() => navigate(`/results/${sub._id}`)}
+          >
+            View Report
+          </button>
+        </div>
+      </div>
+    );
+  })
+  
+) : (
+  <p>No quizzes attempted yet.</p>
+)}
+
+
+
+
             </div>
           </section>
         )}
@@ -210,8 +267,11 @@ const Dashboard = () => {
               type="text"
               placeholder="Paste Quiz URL/Code here..."
               className="url-input"
+              value={quizCode}
+              onChange={(e) => setQuizCode(e.target.value)}
             />
-            <button className="submit-url-btn">Join Now</button>
+            <button className="submit-url-btn" onClick={handleJoinQuiz}>Join Now</button>
+
           </div>
         </div>
       )}

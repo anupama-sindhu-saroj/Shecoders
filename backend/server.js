@@ -5,9 +5,8 @@ import session from "express-session";
 import passport from "passport";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/auth.js";
-
 import quizRoutes from "./routes/quizRoutes.js";
-
+import submissionRoutes from "./routes/submissionRoutes.js";
 
 
 
@@ -37,9 +36,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/api/auth", authRoutes);
-
 app.use("/api/quizzes", quizRoutes);
-
+app.use("/api/submissions", submissionRoutes);
 
 console.log("✅ Quiz routes mounted at /api/quizzes");
 
