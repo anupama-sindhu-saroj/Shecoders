@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./ResultPage.css"; // ✅ new CSS file
 
 const ResultPage = () => {
   const { quizId, attemptId } = useParams();
@@ -23,20 +24,19 @@ const ResultPage = () => {
         setLoading(false);
       }
     };
-
     fetchResult();
   }, [quizId, attemptId]);
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-black via-purple-900 to-black text-purple-200">
-        <div className="animate-pulse text-xl">Loading your result...</div>
+      <div className="result-loading">
+        <div>Loading your result...</div>
       </div>
     );
 
   if (!data)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-black via-purple-900 to-black text-purple-300 text-xl">
+      <div className="result-notfound">
         No result found.
       </div>
     );
@@ -57,44 +57,30 @@ const ResultPage = () => {
   const unansweredCount = quiz.questions.length - submission.answers.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-purple-950 to-black text-purple-100 p-6">
-      <div className="max-w-3xl mx-auto bg-purple-950/30 backdrop-blur-lg border border-purple-700/40 rounded-2xl p-8 shadow-2xl">
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="text-purple-400 hover:text-purple-300 transition mb-6"
-        >
+    <div className="result-container">
+      <div className="result-card">
+        <button className="back-btn" onClick={() => navigate("/dashboard")}>
           ← Back to Dashboard
         </button>
 
-        <h1 className="text-4xl font-bold text-purple-300 mb-4">
-          Quiz Result:{" "}
-          <span className="text-white">{quiz.title || "Untitled Quiz"}</span>
+        <h1 className="result-title">
+          Quiz Result: <span>{quiz.title || "Untitled Quiz"}</span>
         </h1>
 
-        <div className="text-lg mb-4">
-          <p className="text-gray-300 mb-1">Attempt ID: {submission._id}</p>
-          <p className="font-semibold text-purple-200 mb-2">
-            Total Score:{" "}
-            <span className="text-purple-400">
-              {submission.totalScore}/{submission.maxScore}
-            </span>
+        <div className="score-summary">
+          <p className="attempt-id">Attempt ID: {submission._id}</p>
+          <p className="total-score">
+            Total Score: <span>{submission.totalScore}/{submission.maxScore}</span>
           </p>
-          <div className="flex flex-wrap gap-3 text-sm font-medium">
-            <span className="bg-green-700/40 text-green-300 px-3 py-1 rounded-full">
-              ✅ Correct: {correctCount}
-            </span>
-            <span className="bg-red-700/40 text-red-300 px-3 py-1 rounded-full">
-              ❌ Wrong: {wrongCount}
-            </span>
-            <span className="bg-gray-700/40 text-gray-300 px-3 py-1 rounded-full">
-              ⚪ Unanswered: {unansweredCount}
-            </span>
+
+          <div className="stats-container">
+            <span className="stat correct">✅ Correct: {correctCount}</span>
+            <span className="stat wrong">❌ Wrong: {wrongCount}</span>
+            <span className="stat unanswered">⚪ Unanswered: {unansweredCount}</span>
           </div>
         </div>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4 text-purple-200 border-b border-purple-800 pb-2">
-          Question Review
-        </h2>
+        <h2 className="review-heading">Question Review</h2>
 
         {quiz.questions.map((q, index) => {
           const ans = submission.answers.find(
@@ -102,56 +88,27 @@ const ResultPage = () => {
           );
           const toOption = (v) => toOptionTextFromValue(v, q);
 
-          let userAnswer = "N/A";
-          if (!ans) {
-            userAnswer = "Unanswered";
-          } else if (q.type === "short") {
-            userAnswer = ans.shortAnswer || "N/A";
-          } else if (q.type === "truefalse") {
-            userAnswer =
-              ans.trueFalseValue !== null && ans.trueFalseValue !== undefined
-                ? String(ans.trueFalseValue)
-                : "N/A";
-          } else {
-            userAnswer =
-              (ans.selectedOptions || []).map(toOption).join(", ") || "N/A";
+          let userAnswer = "Unanswered";
+          if (ans) {
+            if (q.type === "short") userAnswer = ans.shortAnswer || "N/A";
+            else if (q.type === "truefalse") userAnswer = String(ans.trueFalseValue);
+            else userAnswer = (ans.selectedOptions || []).map(toOption).join(", ");
           }
 
           let correctAnswer = "N/A";
-          if (q.type === "short") {
-            correctAnswer = q.expectedAnswer || "N/A";
-          } else if (q.type === "truefalse") {
-            correctAnswer =
-              q.trueFalseValue !== null && q.trueFalseValue !== undefined
-                ? String(q.trueFalseValue)
-                : "N/A";
-          } else {
-            correctAnswer =
-              (q.correct || []).map(toOption).join(", ") || "N/A";
-          }
-
-          const statusColor = ans
-            ? ans.isCorrect
-              ? "text-green-400"
-              : "text-red-400"
-            : "text-gray-400";
+          if (q.type === "short") correctAnswer = q.expectedAnswer || "N/A";
+          else if (q.type === "truefalse") correctAnswer = String(q.trueFalseValue);
+          else correctAnswer = (q.correct || []).map(toOption).join(", ");
 
           return (
             <div
               key={q._id}
-              className="bg-black/40 border border-purple-800 rounded-xl p-5 mb-4 hover:shadow-purple-700/40 hover:shadow-md transition"
+              className={`question-card ${ans ? (ans.isCorrect ? "correct-ans" : "wrong-ans") : "unanswered"}`}
             >
-              <h3 className="font-semibold text-lg text-white mb-2">
-                Q{index + 1}: {q.text}
-              </h3>
-              <p className="text-gray-300">
-                Your Answer: <span className={statusColor}>{userAnswer}</span>
-              </p>
+              <h3>Q{index + 1}: {q.text}</h3>
+              <p><strong>Your Answer:</strong> {userAnswer}</p>
               {!ans?.isCorrect && (
-                <p className="text-gray-400 mt-1">
-                  Correct Answer:{" "}
-                  <span className="text-purple-300">{correctAnswer}</span>
-                </p>
+                <p className="correct-answer"><strong>Correct Answer:</strong> {correctAnswer}</p>
               )}
             </div>
           );

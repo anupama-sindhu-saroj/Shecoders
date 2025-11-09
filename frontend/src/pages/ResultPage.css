@@ -1,0 +1,124 @@
+body {
+  background: radial-gradient(circle at top left, #050505, #0b0018, #090014);
+  color: #e0d8ff;
+  font-family: "Inter", sans-serif;
+}
+
+.result-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px;
+}
+
+.result-card {
+  background: rgba(20, 0, 40, 0.75);
+  border: 1px solid rgba(128, 0, 255, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(128, 0, 255, 0.2);
+  padding: 40px;
+  max-width: 800px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+}
+
+.back-btn {
+  background: none;
+  color: #a472ff;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 15px;
+  transition: color 0.3s;
+}
+.back-btn:hover {
+  color: #c7a6ff;
+}
+
+.result-title {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #b47bff;
+}
+.result-title span {
+  color: #fff;
+}
+
+.score-summary {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid rgba(120, 0, 255, 0.2);
+  border-radius: 10px;
+  background: rgba(30, 0, 60, 0.5);
+}
+
+.stats-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.stat {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+.correct {
+  background: rgba(0, 255, 100, 0.2);
+  color: #6bff95;
+}
+.wrong {
+  background: rgba(255, 0, 70, 0.2);
+  color: #ff6b85;
+}
+.unanswered {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.review-heading {
+  color: #c5a3ff;
+  border-bottom: 1px solid rgba(120, 0, 255, 0.3);
+  padding-bottom: 5px;
+  margin-top: 25px;
+  font-size: 20px;
+}
+
+.question-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(140, 0, 255, 0.2);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 15px;
+  transition: all 0.3s;
+}
+.question-card:hover {
+  box-shadow: 0 0 10px rgba(160, 80, 255, 0.3);
+}
+
+.correct-ans {
+  border-left: 4px solid #0f0;
+}
+.wrong-ans {
+  border-left: 4px solid #f33;
+}
+.unanswered {
+  border-left: 4px solid #999;
+}
+
+.correct-answer {
+  color: #bb9eff;
+  margin-top: 6px;
+}
+
+.result-loading,
+.result-notfound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 20px;
+  color: #bfaaff;
+  background: radial-gradient(circle at center, #070010, #0a0015);
+}
