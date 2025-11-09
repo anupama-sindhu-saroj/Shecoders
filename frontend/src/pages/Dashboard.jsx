@@ -346,7 +346,8 @@ const Dashboard = () => {
                       <div className="card-actions">
                         <button
                           className="card-btn analytics-btn"
-                          onClick={() => navigate(`/results/${sub._id}`)}
+                          onClick={() => navigate(`/result/${sub.quizId?._id || sub.quizId}/${sub._id}`)}
+
                         >
                           View Report
                         </button>
