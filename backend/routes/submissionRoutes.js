@@ -5,10 +5,6 @@ import Submission from "../models/Submission.js";
 
 const router = express.Router();
 
-/**
- * ✅ POST /api/submissions
- * Save and auto-evaluate quiz submission
- */
 
   router.post("/", async (req, res) => {
   try {
@@ -23,7 +19,7 @@ const router = express.Router();
     const evaluatedAnswers = answers.map((ans) => {
       const question = quiz.questions.id(ans.questionId);
       if (!question) {
-        return { ...ans, isCorrect: false, pointsAwarded: 0 }; // ✅ ensure defined
+        return { ...ans, isCorrect: false, pointsAwarded: 0 }; 
       }
 
       let isCorrect = false;
@@ -64,7 +60,7 @@ const router = express.Router();
         selectedOptions: ans.selectedOptions || [],
         shortAnswer: ans.shortAnswer || "",
         trueFalseValue: ans.trueFalseValue ?? null,
-        isCorrect, // ✅ ensure explicit true/false
+        isCorrect, 
         pointsAwarded,
       };
     });
@@ -92,10 +88,6 @@ const router = express.Router();
 });
 
 
-/**
- * ✅ GET /api/submissions/user/:userId
- * Fetch all submissions for a given user
- */
 router.get("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -115,10 +107,6 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
-/**
- * ✅ GET /api/results?quizId=...&attemptId=...
- * This endpoint is what ResultPage expects
- */
 router.get("/results", async (req, res) => {
   try {
     const { quizId, attemptId } = req.query;
@@ -137,10 +125,7 @@ router.get("/results", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 } );
-/**
- * ✅ GET /api/analytics/:quizId
- * For quiz creators — fetch all submissions and compute analytics
- */
+
 router.get("/analytics/:quizId", async (req, res) => {
   try {
     const { quizId } = req.params;

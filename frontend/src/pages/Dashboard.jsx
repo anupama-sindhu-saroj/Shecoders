@@ -14,14 +14,14 @@ const Dashboard = () => {
 
   const totalAttempts = attemptedQuizzes.length;
 
-  // ✅ Logout
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
   };
 
-  // ✅ Fetch quizzes
+
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -40,7 +40,7 @@ const Dashboard = () => {
     fetchQuizzes();
   }, []);
 
-  // ✅ Fetch user attempts
+
   useEffect(() => {
     const fetchAttempts = async () => {
       const token = localStorage.getItem("token");
@@ -70,7 +70,7 @@ const Dashboard = () => {
   const handleJoinQuiz = async () => {
     if (!quizCode) return alert("Enter quiz ID or code!");
   
-    // Extract only the MongoDB ObjectId from the input
+   
     const objectIdMatch = quizCode.match(/[a-fA-F0-9]{24}/);
     if (!objectIdMatch) {
       return alert("Invalid Quiz ID. Make sure you copy the correct ID or link!");
@@ -96,15 +96,13 @@ const Dashboard = () => {
     }
   };
   
-  
-  
-  // ✅ Separate quizzes into Drafts and Published
+
   const drafts = quizzes.filter((q) => q.status === "draft");
   const published = quizzes.filter((q) => q.status === "published");
 
   return (
     <div className="dashboard-container">
-      {/* Header Navigation */}
+    
       <header className="dashboard-header">
         <nav className="quiz-nav">
           <button
@@ -122,10 +120,9 @@ const Dashboard = () => {
           </button>
         </nav>
 
-        {/* ✅ Actions + Profile */}
         <div className="action-buttons">
 
-          {/* ✅ Create Quiz */}
+        
           <button
             className="action-btn create-quiz-btn"
             onClick={() => navigate("/create-quiz")}
@@ -133,7 +130,6 @@ const Dashboard = () => {
             + Create New Quiz
           </button>
 
-          {/* ✅ Join Quiz */}
           <button
             className="action-btn join-quiz-btn"
             onClick={() => setShowModal(true)}
@@ -141,10 +137,9 @@ const Dashboard = () => {
             Join Quiz
           </button>
 
-          {/* ✅ Profile Container */}
           <div className="profile-container">
             
-            {/* ✅ Profile Button */}
+  
             <button
               className="profile-btn"
               onClick={() => setShowProfileMenu((prev) => !prev)}
@@ -152,7 +147,7 @@ const Dashboard = () => {
               {(() => {
                 const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-                // ✅ If profile picture exists → show image
+             
                 if (user?.picture) {
                   return (
                     <img
@@ -163,7 +158,7 @@ const Dashboard = () => {
                   );
                 }
 
-                // ✅ Try different possible email/name keys
+         
                 const email =
                   user?.email ||
                   user?.userEmail ||
@@ -172,14 +167,13 @@ const Dashboard = () => {
                   user?.name ||
                   "";
 
-                // ✅ Extract initial safely
+             
                 const initial = email?.charAt(0)?.toUpperCase() || "U";
 
                 return initial;
               })()}
             </button>
 
-            {/* ✅ Profile Dropdown */}
             {showProfileMenu && (
               <div className="profile-dropdown">
                 <button onClick={() => navigate("/profile")}>Profile</button>
