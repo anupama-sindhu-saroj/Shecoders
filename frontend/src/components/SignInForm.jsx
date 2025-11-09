@@ -19,7 +19,7 @@ const SignInForm = () => {
         password,
       });
 
-     const { token, user } = res.data;
+      const { token, user } = res.data;
 
     if (!token || !user) {
       setError("Login failed: No token or user data received from server");
