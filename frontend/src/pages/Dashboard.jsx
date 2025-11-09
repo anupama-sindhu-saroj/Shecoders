@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const navigate = useNavigate();
+
   const totalAttempts = attemptedQuizzes.length;
 
   // ✅ Logout
@@ -45,18 +46,18 @@ const Dashboard = () => {
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user"));
       const userId = user?._id;
-
       if (!userId) return;
 
-      const res = await fetch(
-        `http://localhost:5001/api/submissions/user/${userId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const data = await res.json();
-      setAttemptedQuizzes(Array.isArray(data) ? data : []);
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/submissions/user/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        setAttemptedQuizzes(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("❌ Failed to fetch user attempts:", error);
+      }
     };
 
     fetchAttempts();
@@ -103,7 +104,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* ✅ Header */}
+      {/* Header Navigation */}
       <header className="dashboard-header">
         <nav className="quiz-nav">
           <button
@@ -114,9 +115,7 @@ const Dashboard = () => {
           </button>
 
           <button
-            className={`nav-tab ${
-              activeTab === "attemptedQuizzes" ? "active" : ""
-            }`}
+            className={`nav-tab ${activeTab === "attemptedQuizzes" ? "active" : ""}`}
             onClick={() => setActiveTab("attemptedQuizzes")}
           >
             Attempted Quizzes
