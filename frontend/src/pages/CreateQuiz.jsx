@@ -25,24 +25,20 @@ export default function CreateQuiz() {
   const query = new URLSearchParams(window.location.search);
   const isDraftEdit = query.has("draftId");
 
-  // If editing an existing draft, keep fetched draft data (API will set state).
   if (isDraftEdit) return;
 
-  // If user came back from preview, restore from localStorage.previewQuizData
   const fromPreview = sessionStorage.getItem("fromPreview");
   const previewRaw = localStorage.getItem("previewQuizData");
 
   if (fromPreview) {
-    sessionStorage.removeItem("fromPreview"); // one-time flag
+    sessionStorage.removeItem("fromPreview"); 
 
     if (previewRaw) {
       try {
         const previewQuiz = JSON.parse(previewRaw);
-        // prefer preview data when coming back from Preview
         setQuiz(previewQuiz);
       } catch (e) {
         console.error("Invalid previewQuizData JSON:", e);
-        // fallback: reset form below
         localStorage.removeItem("previewQuizData");
         setQuiz({
           title: "",
@@ -63,10 +59,10 @@ export default function CreateQuiz() {
     } else {
       // no preview stored — nothing to restore
     }
-    return; // do not reset the form
+    return; 
   }
 
-  // Otherwise it's a fresh new quiz: clear preview storage + reset state
+  
   localStorage.removeItem("previewQuizData");
   setQuiz({
     title: "",
@@ -126,7 +122,6 @@ useEffect(() => {
         text: "⚠️ End Date cannot be before Start Date.",
         type: "error",
       });
-      // Auto-correct by resetting endDate
       setQuiz((prev) => ({ ...prev, endDate: "" }));
     }
   }
@@ -138,9 +133,9 @@ useEffect(() => {
     id: quiz.questions.length + 1,
     text: "",
     image: null,
-    type: "single", // ✅ matches your allowed enum
-    options: ["", ""], // ✅ at least two blank options
-    correct: [], // ✅ avoids undefined.includes crash
+    type: "single", 
+    options: ["", ""], 
+    correct: [], 
     points: 1,
     negative: false,
     trueFalseValue: null,
@@ -174,6 +169,7 @@ useEffect(() => {
     ? `http://localhost:5001/api/quizzes/${draftId}`
     : "http://localhost:5001/api/quizzes";
   const method = draftId ? "PUT" : "POST";
+  console.log("Submitting quiz payload (DRAFT):", JSON.stringify(quiz, null, 2));
 
   try {
     const res = await fetch(url, {
@@ -194,13 +190,13 @@ useEffect(() => {
         type: "success",
       });
 
-      // 🕒 Small delay to let user see success message, then redirect
+      
       setTimeout(() => {
-        // ✅ clear preview data so next time CreateQuiz is fresh
+        // clear preview data so next time CreateQuiz is fresh
         localStorage.removeItem("previewQuizData");
         sessionStorage.removeItem("fromPreview");
 
-        // ✅ navigate after cleanup
+        // navigate after cleanup
         navigate("/dashboard");
       }, 800);
 
@@ -214,7 +210,7 @@ useEffect(() => {
 };
 
   const validateQuizBeforePublish = () => {
-  // ✅ 1. Basic quiz info checks
+  
   if (!quiz.title.trim()) {
     setMessage({ text: "⚠️ Quiz title is required.", type: "error" });
     return false;
@@ -225,7 +221,7 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ 2. Duration should be positive
+  
   if (!quiz.duration || quiz.duration <= 0) {
     setMessage({
       text: "⚠️ Duration must be greater than 0 minutes.",
@@ -234,7 +230,7 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ 3. Dates must both be provided
+
   if (!quiz.startDate || !quiz.endDate) {
     setMessage({
       text: "⚠️ Please provide both Start Date and End Date before publishing.",
@@ -243,7 +239,6 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ 4. Validate start/end date logic
   const start = new Date(quiz.startDate);
   const end = new Date(quiz.endDate);
   if (end < start) {
@@ -254,7 +249,6 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ 5. At least one question required
   if (quiz.questions.length === 0) {
     setMessage({
       text: "⚠️ Please add at least one question before publishing.",
@@ -263,7 +257,6 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ 6. Validate every question thoroughly
   for (let q of quiz.questions) {
     if (!q.text.trim()) {
       setMessage({
@@ -291,7 +284,6 @@ useEffect(() => {
     }
   }
 
-  // ✅ 7. Attempt limit must be non-negative
   if (quiz.attemptLimit < 0) {
     setMessage({
       text: "⚠️ Attempt limit cannot be negative.",
@@ -300,18 +292,17 @@ useEffect(() => {
     return false;
   }
 
-  // ✅ Passed all checks
   return true;
 };
 
   const publishQuiz = async () => {
-  // Run validation first
   if (!validateQuizBeforePublish()) return;
+    console.log("Submitting quiz payload (PUBLISH):", JSON.stringify(quiz, null, 2));
 
   const data = await saveQuiz(quiz, "published", token);
 
   if (data.success) {
-    // ✅ cleanup preview storage so next time CreateQuiz opens fresh
+  
     localStorage.removeItem("previewQuizData");
     sessionStorage.removeItem("fromPreview");
 
@@ -319,7 +310,7 @@ useEffect(() => {
       setShareLink(data.link);
       setShowLinkModal(true);
     } else {
-      // if there's no link but success, go to dashboard after brief message
+      
       setMessage({ text: "Published successfully!", type: "success" });
       setTimeout(() => navigate("/dashboard"), 800);
     }
@@ -330,9 +321,6 @@ useEffect(() => {
     });
   }
 };
-
-  
-
 
   return (
     <div className="w-screen min-h-screen bg-[#0b0f19] text-gray-100 overflow-y-scroll h-full">
@@ -347,14 +335,14 @@ useEffect(() => {
           Create New Quiz
         </h1>
 
-        {/* Quiz Details & Setup */}
+        
         <div className="bg-[#131a2a] border border-white-700/40 rounded-2xl p-8 shadow-[0_0_25px_rgba(0,255,255,0.05)] mb-10 transition-transform duration-300 hover:shadow-[0_0_35px_rgba(0,255,255,0.15)]">
           <h2 className="text-2xl font-semibold mb-6 text-[#24d1f5] flex items-center gap-3">
             <i className="fas fa-clipboard-list text-[#00bcd4]"></i>
             Quiz Details & Setup
           </h2>
 
-          {/* Quiz Info */}
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-300">
             <div>
               <label className="block text-sm text-white-400 mb-2">
@@ -468,14 +456,13 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* 🔧 Advanced Settings */}
           <div className="mt-10 border-t border-cyan-700/40 pt-6">
             <h3 className="text-xl font-semibold text-white mb-4">
               Advanced Settings
             </h3>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Toggle 1 */}
+              
               <div className="bg-[#0e1624] border border-cyan-700/40 p-4 rounded-xl flex justify-between items-center">
                 <span className="text-sm text-white-300">
                   10. Randomize Questions Order
@@ -502,7 +489,6 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Add Questions */}
         <h2
           className="text-2xl font-semibold mb-4 text-white-900"
           style={{
@@ -519,17 +505,19 @@ useEffect(() => {
               key={q.id}
               id={q.id}
               question={q}
-              updateQuestion={(updatedQ) => {
+              updateQuestion={(updater) =>
                 setQuiz((prev) => ({
                   ...prev,
                   questions: prev.questions.map((qq) =>
-                    qq.id === q.id ? updatedQ : qq
+                    qq.id === q.id ? (typeof updater === "function" ? updater(qq) : updater) : qq
                   ),
-                }));
-              }}
+                }))
+              }
               removeQuestion={removeQuestion}
             />
           ))}
+
+
 
           <button
             onClick={addQuestion}
@@ -539,7 +527,6 @@ useEffect(() => {
           </button>
         </div>
 
-        {/* Save / Preview */}
         <div className="flex flex-wrap justify-center gap-6 mt-10">
           <button
             onClick={saveDraft}
@@ -558,13 +545,11 @@ useEffect(() => {
               return;
             }
 
-            // ✅ Save current quiz to localStorage for preview
+            
               localStorage.setItem("previewQuizData", JSON.stringify(quiz));
 
-              // ✅ Mark we came from Preview
               sessionStorage.setItem("fromPreview", "true");
 
-              // ✅ Go to preview
               navigate("/preview");
 
           }}

@@ -12,7 +12,7 @@ const Dashboard = () => {
   const [attemptedQuizzes, setAttemptedQuizzes] = useState([]);
   const navigate = useNavigate();
   const totalAttempts = attemptedQuizzes.length;
-  // ✅ Fetch quizzes when page loads
+  // Fetch quizzes when page loads
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -62,7 +62,7 @@ const Dashboard = () => {
   
     navigate(`/quiz/${id}`);
   };
-  // ✅ Separate quizzes into Drafts and Published
+  // Separate quizzes into Drafts and Published
   const drafts = quizzes.filter((q) => q.status === "draft");
   const published = quizzes.filter((q) => q.status === "published");
 
@@ -103,11 +103,9 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* 📋 Main Dashboard */}
+      
       <main className="dashboard-main">
-        {/* ============================
-            TAB 1: MY QUIZZES SECTION
-        ============================ */}
+        
         {activeTab === "myQuizzes" && (
           <section className="quiz-content-section active-section">
             <h1 className="section-title">My Quizzes</h1>
@@ -124,9 +122,7 @@ const Dashboard = () => {
                 </p>
               </div>
 
-              {/* ==============================
-                  DRAFT QUIZZES SECTION
-              ============================== */}
+              
               {drafts.length > 0 && (
                 <>
                   <h2 style={{ color: "#00eaff", marginTop: "30px" }}>Drafts</h2>
@@ -151,9 +147,6 @@ const Dashboard = () => {
                 </>
               )}
 
-              {/* ==============================
-                  PUBLISHED QUIZZES SECTION
-              ============================== */}
               {published.length > 0 && (
                 <>
                   <h2 style={{ color: "#00ff88", marginTop: "30px" }}>Published</h2>
@@ -182,7 +175,6 @@ const Dashboard = () => {
                 </>
               )}
 
-              {/* ✅ Empty State */}
               {drafts.length === 0 && published.length === 0 && (
                 <p style={{ color: "#aaa", marginTop: "20px" }}>
                   You haven’t created any quizzes yet. Click “+ Create New Quiz”
@@ -193,9 +185,6 @@ const Dashboard = () => {
           </section>
         )}
 
-        {/* ============================
-            TAB 2: ATTEMPTED QUIZZES SECTION
-        ============================ */}
         {activeTab === "attemptedQuizzes" && (
           <section className="quiz-content-section">
             <h1 className="section-title">Attempted Quizzes</h1>
@@ -251,7 +240,7 @@ const Dashboard = () => {
         )}
       </main>
 
-      {/* 🔗 Join Quiz Modal */}
+      {/*Join Quiz Modal */}
       {showModal && (
         <div className="modal" onClick={() => setShowModal(false)}>
           <div

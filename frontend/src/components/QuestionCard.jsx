@@ -1,7 +1,7 @@
 import React from "react";
 
 const QuestionCard = ({ id, question, updateQuestion, removeQuestion }) => {
-  // ✅ Safe defaults to prevent runtime errors
+  
   const safeQuestion = {
     text: "",
     image: null,
@@ -15,27 +15,62 @@ const QuestionCard = ({ id, question, updateQuestion, removeQuestion }) => {
     ...question, // merge actual question data
   };
 
-  // ✏️ Handle text, dropdown, number input, etc.
+  // Handle text, dropdown, number input, etc.
   const handleChange = (e) => {
     updateQuestion({ ...safeQuestion, [e.target.name]: e.target.value });
   };
 
-  // ⚙️ Handle changing an option’s text
+  //  Handle changing an option’s text
   const handleOptionChange = (index, value) => {
     const updated = [...safeQuestion.options];
     updated[index] = value;
     updateQuestion({ ...safeQuestion, options: updated });
   };
 
-  // ➕ Add new option field
+  //  Add new option field
   const addOption = () => {
     updateQuestion({ ...safeQuestion, options: [...safeQuestion.options, ""] });
   };
 
-  // 🖼️ Upload optional image
-  const handleImageUpload = (e) => {
-    updateQuestion({ ...safeQuestion, image: e.target.files[0] });
-  };
+const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const token = localStorage.getItem("token");
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const res = await fetch("http://localhost:5001/api/upload", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log("Upload response:", data);
+
+    if (data.success) {
+      // ✅ Use functional update to always get the latest question state
+      updateQuestion((prevQ) => ({
+        ...prevQ,
+        image: data.imageUrl,
+      }));
+
+      console.log("✅ Image uploaded and state updated:", data.imageUrl);
+      alert("✅ Image uploaded successfully!");
+    } else {
+      alert("❌ Upload failed: " + data.message);
+    }
+  } catch (err) {
+    console.error("❌ Error uploading image:", err);
+    alert("Network error while uploading image.");
+  }
+};
+
+
 
   // ⚠️ Toggle negative marking
   const toggleNegative = () => {

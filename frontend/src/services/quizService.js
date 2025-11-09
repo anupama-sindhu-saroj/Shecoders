@@ -5,18 +5,18 @@ export const saveQuiz = async (quiz, status, token) => {
       return { success: false, error: "User not authenticated. Please log in again." };
     }
 
-    console.log("🪶 Sending token:", token); // ✅ helpful for debugging
+    console.log("🪶 Sending token:", token); 
 
     const res = await fetch("http://localhost:5001/api/quizzes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ✅ must include Bearer
+        Authorization: `Bearer ${token}`, // must include Bearer
       },
       body: JSON.stringify({ ...quiz, status }),
     });
 
-    // ⚠️ Check if token was rejected (backend sends 401)
+    // token was rejected (backend sends 401)
     if (!res.ok) {
       const errMsg = `Server returned ${res.status}: ${res.statusText}`;
       console.error("❌ Save quiz failed:", errMsg);
