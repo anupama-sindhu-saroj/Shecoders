@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const answerSchema = new mongoose.Schema({
   questionId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  selectedOptions: [String], // for single/multiple choice
-  trueFalseValue: { type: Boolean, default: null }, // for true/false
-  shortAnswer: { type: String, default: "" }, // for short type
+  selectedOptions: [String], 
+  trueFalseValue: { type: Boolean, default: null }, 
+  shortAnswer: { type: String, default: "" }, 
   isCorrect: { type: Boolean, default: false },
   pointsAwarded: { type: Number, default: 0 },
 });
@@ -17,7 +17,7 @@ const submissionSchema = new mongoose.Schema({
   totalScore: { type: Number, default: 0 },
   maxScore: { type: Number, default: 0 },
   submittedAt: { type: Date, default: Date.now },
-  timeTaken: { type: Number, default: 0 }, // in seconds (optional)
+  timeTaken: { type: Number, default: 0 },
 });
 
 const Submission = mongoose.model("Submission", submissionSchema);

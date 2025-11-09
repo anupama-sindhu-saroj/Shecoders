@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // ✅ useParams to get quizId
+import { useParams } from "react-router-dom"; 
 import axios from "axios";
 import "./QuizAnalytics.css";
 
 export default function Analytics() {
-  const { quizId } = useParams(); // get quizId from URL
+  const { quizId } = useParams(); 
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +42,7 @@ export default function Analytics() {
         <p className="subtitle">Quiz ID: {quizId}</p>
       </div>
 
-      {/* KPI Cards */}
+      {}
       <div className="kpi-cards">
         <div className="card">
           <p>Class Average Score</p>

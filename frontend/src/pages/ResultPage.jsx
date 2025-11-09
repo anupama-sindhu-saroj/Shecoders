@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./ResultPage.css"; // ✅ new CSS file
+import "./ResultPage.css"; 
 
 const ResultPage = () => {
   const { quizId, attemptId } = useParams();

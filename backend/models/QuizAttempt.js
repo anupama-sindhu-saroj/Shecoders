@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const UserAnswerSchema = new mongoose.Schema({
   questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz.questions" },
-  selectedOptions: [Number], // indexes of selected options
+  selectedOptions: [Number], 
   shortAnswer: String,
   trueFalseAnswer: Boolean,
-  isCorrect: Boolean, // computed during submission
+  isCorrect: Boolean, 
   pointsEarned: { type: Number, default: 0 },
 });
 
@@ -17,7 +17,7 @@ const QuizAttemptSchema = new mongoose.Schema(
     score: { type: Number, default: 0 },
     startedAt: { type: Date, default: Date.now },
     finishedAt: Date,
-    durationTaken: Number, // seconds/minutes user took
+    durationTaken: Number, 
     status: {
       type: String,
       enum: ["in-progress", "completed", "timeout"],

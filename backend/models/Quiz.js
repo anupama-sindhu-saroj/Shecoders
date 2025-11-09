@@ -4,8 +4,8 @@ const questionSchema = new mongoose.Schema({
   text: { type: String, required: true },
   image: { type: String, default: null },
   type: { type: String, enum: ["single", "multiple", "truefalse", "short"], default: "single" },
-  options: [String], // ✅ matches your frontend (["5","2","3"])
-  correct: [String], // ✅ array of correct answers
+  options: [String], 
+  correct: [String], 
   points: { type: Number, default: 1 },
   negative: { type: Boolean, default: false },
   trueFalseValue: { type: Boolean, default: null },
