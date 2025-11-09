@@ -60,7 +60,13 @@ router.get("/public/:id", async (req, res) => {
       return res.status(404).json({ success: false, error: "Quiz not found" });
     }
 
-    
+    if (quiz.endDate && new Date(quiz.endDate) < new Date()) {
+      return res
+        .status(403)
+        .json({ success: false, error: "This quiz has ended. You cannot attempt it." });
+    }
+
+    // ✅ Check visibility
     if (quiz.status !== "published" || !quiz.public) {
       return res
         .status(403)
@@ -77,23 +83,34 @@ router.get("/public/:id", async (req, res) => {
   }
 });
 
-router.get("/:id", protect, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
-    const quiz = await Quiz.findOne({
-      _id: req.params.id,
-      createdBy: req.user._id,
-    });
+    const { id } = req.params;
+    const token = req.headers.authorization?.split(" ")[1];
+    let userId = null;
 
-    if (!quiz) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Quiz not found or unauthorized" });
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      userId = decoded.id;
+    }
+
+    const quiz = await Quiz.findById(id);
+    if (!quiz) return res.status(404).json({ success: false, message: "Quiz not found" });
+
+    // Check if quiz has ended
+    if (quiz.endDate && new Date(quiz.endDate) < new Date() && quiz.createdBy.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "This quiz has ended. You cannot attempt it." });
+    }
+
+    // Only allow access if published or creator
+    if (quiz.status !== "published" && quiz.createdBy.toString() !== userId) {
+      return res.status(403).json({ success: false, message: "This quiz is private" });
     }
 
     res.json({ success: true, quiz });
   } catch (err) {
-    console.error(" Error fetching quiz:", err);
-    res.status(500).json({ success: false, error: "Server error" });
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 

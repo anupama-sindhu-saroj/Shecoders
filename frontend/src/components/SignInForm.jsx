@@ -19,18 +19,27 @@ const SignInForm = () => {
         password,
       });
 
-      if (!res.data.token) {
-        setError("Login failed: No token received from server");
-        return;
-      }
+      const { token, user } = res.data;
 
-      localStorage.setItem("token", res.data.token);
-      console.log("✅ Login success:", res.data);
+    if (!token || !user) {
+      setError("Login failed: No token or user data received from server");
+      return;
+    }
 
-      alert("✅ Login successful! Redirecting to dashboard...");
-      return navigate("/dashboard");
+    // Clear any old data
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // Store new token and user info
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+
+    console.log("✅ Login success:", user);
+
+    alert("✅ Login successful! Redirecting to dashboard...");
+    navigate("/dashboard");
     } catch (err) {
-      console.error("❌ Login error:", err.response?.data || err.message);
+      console.error("Login error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Invalid email or password");
     }
   };

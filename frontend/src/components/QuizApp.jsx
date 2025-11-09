@@ -336,9 +336,24 @@ export default function QuizApp({ testStarted }) {
   };
 
   const handleEndTest = (silent = false) => {
-    if (!silent) alert("Test ended due to proctor violations!");
-    handleSubmit(true);
-    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    // Pause everything
+  setIsPaused(true);
+  setEndOverlayVisible(true);
+  
+  // Stop timer
+  if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+
+  // Submit quiz silently
+  handleSubmit(true);
+
+  // Optionally alert
+  if (!silent) alert("⚠️ Test ended due to violations. Redirecting to dashboard...");
+
+  // Redirect after 3 seconds
+  setTimeout(() => {
+    setEndOverlayVisible(false);
+    navigate("/dashboard");
+  }, 3000);
   };
 
   const ViolationModal = ({ visible, onProceed }) => {
