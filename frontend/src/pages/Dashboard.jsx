@@ -61,18 +61,43 @@ const Dashboard = () => {
 
     fetchAttempts();
   }, []);
-
-  // ✅ Join quiz
-  const handleJoinQuiz = () => {
+  
+  useEffect(() => {
+    console.log("attemptedQuizzes:", attemptedQuizzes);
+  }, [attemptedQuizzes]);
+  
+  const handleJoinQuiz = async () => {
     if (!quizCode) return alert("Enter quiz ID or code!");
-
-    const id = quizCode.includes("http")
-      ? quizCode.split("/").pop()
-      : quizCode;
-
-    navigate(`/quiz/${id}`);
+  
+    // Extract only the MongoDB ObjectId from the input
+    const objectIdMatch = quizCode.match(/[a-fA-F0-9]{24}/);
+    if (!objectIdMatch) {
+      return alert("Invalid Quiz ID. Make sure you copy the correct ID or link!");
+    }
+  
+    const id = objectIdMatch[0];
+    const token = localStorage.getItem("token");
+  
+    try {
+      const res = await fetch(`http://localhost:5001/api/quizzes/public/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        return alert(errorData.message || "Quiz not found");
+      }
+  
+      navigate(`/quiz/${id}`);
+    } catch (error) {
+      console.error("Error fetching quiz:", error);
+      alert("Failed to fetch quiz. Make sure the ID is correct.");
+    }
   };
-
+  
+  
+  
+  // ✅ Separate quizzes into Drafts and Published
   const drafts = quizzes.filter((q) => q.status === "draft");
   const published = quizzes.filter((q) => q.status === "published");
 
