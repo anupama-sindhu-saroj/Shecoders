@@ -265,6 +265,13 @@ const Dashboard = () => {
                         >
                           Copy Link
                         </button>
+                         <button
+                          className="card-btn analytics-btn"
+                          onClick={() => navigate(`/analytics/${quiz._id}`)}
+                        >
+                          View Analysis
+                        </button>
+
                       </div>
                     </div>
                   ))}
