@@ -1,162 +1,132 @@
 .analytics-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: Arial, sans-serif;
-  color: #e5e7eb; /* text-white equivalent */
-  background-color: #1f2937; /* dark background */
-}
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            font-family: 'Inter', sans-serif;
+            color: #EDE9FE; /* Light text */
+            min-height: 100vh; /* Ensure full viewport height */
+        }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-bottom: 1px solid #374151;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
-}
+        .header {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-bottom: 1px solid #553F85; /* Purple border */
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
 
-.header .title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-}
+        .header .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+        }
 
-.header .icon {
-  margin-right: 1rem;
-  color: #06b6d4;
-}
+        .header .icon {
+            margin-right: 1rem;
+            color: #C4B5FD; /* Bright purple accent */
+        }
 
-.quiz-selector label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
-}
+        /* Removed quiz selector CSS as it's not used in this layout */
 
-.quiz-selector select {
-  width: 100%;
-  max-width: 320px;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #374151;
-  background-color: #111827;
-  color: #e5e7eb;
-}
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
 
-.kpi-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-}
+        .card {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: rgba(196, 181, 253, 0.1); /* Transparent purple card background */
+            border: 2px solid #9F7AEA; /* Strong purple border (using your accent color) */
+            box-shadow: 0 4px 14px rgba(159, 122, 234, 0.4); /* Glow effect */
+        }
 
-.card {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  text-align: center;
-}
+        .large-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-top: 0.5rem;
+            color: #C4B5FD; /* Apply accent color to main numbers */
+        }
 
-.large-number {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-top: 0.5rem;
-}
+        .small-text {
+            font-size: 0.875rem;
+            color: #A797C6; /* Muted purple text */
+            margin-top: 0.25rem;
+        }
 
-.small-text {
-  font-size: 0.875rem;
-  color: #9ca3af;
-  margin-top: 0.25rem;
-}
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr; /* Default to 1 column for mobile */
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
 
-.charts-section {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
-}
+        @media (min-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 2fr 1fr; /* Desktop layout: Chart (2 parts) and Leaderboard (1 part) */
+            }
+        }
 
-.chart {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-}
+        .chart, .leaderboard {
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: rgba(196, 181, 253, 0.1); /* Subtle transparent background */
+            border: 2px solid #9F7AEA; /* Strong purple border */
+            box-shadow: 0 4px 14px rgba(159, 122, 234, 0.4); /* Glow effect */
+        }
 
-.chart h3 {
-  display: flex;
-  align-items: center;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
+        .chart h3, .leaderboard h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #C4B5FD; /* Accent color for chart headings */
+        }
 
-.chart .icon-small {
-  margin-right: 0.5rem;
-  color: #06b6d4;
-}
+        .chart .icon-small, .leaderboard .icon-small {
+            margin-right: 0.5rem;
+            color: #C4B5FD; /* Bright purple accent */
+        }
 
-.chart-description {
-  font-size: 0.875rem;
-  color: #9ca3af;
-  margin-bottom: 1rem;
-}
+        .chart-description {
+            font-size: 0.875rem;
+            color: #A797C6; /* Muted purple text */
+            margin-bottom: 1rem;
+        }
 
-.difficulty-bars .difficulty-bar {
-  margin-bottom: 1rem;
-}
+        /* Leaderboard Specific Styling */
+        .table-wrapper {
+            overflow-x: auto;
+        }
 
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.25rem;
-}
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.bar-bg {
-  height: 0.5rem;
-  background-color: #374151;
-  border-radius: 0.25rem;
-}
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+        }
 
-.bar-fill {
-  height: 100%;
-  border-radius: 0.25rem;
-}
+        .leaderboard-table thead th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            color: #C4B5FD; /* Bright purple accent for headers */
+            border-bottom: 1px solid #553F85;
+        }
 
-.leaderboard {
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-}
+        .leaderboard-table tbody tr {
+            border-bottom: 1px solid rgba(196, 181, 253, 0.05);
+        }
 
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.leaderboard-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.leaderboard-table th,
-.leaderboard-table td {
-  padding: 0.75rem;
-  text-align: left;
-}
-
-.leaderboard-table thead th {
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  color: #06b6d4;
-  background-color: #1f2937;
-}
-
-.leaderboard-table tbody tr:hover {
-  background-color: rgba(55, 65, 81, 0.3);
-}
-
-.uid {
-  font-size: 0.75rem;
-  color: #9ca3af;
-}
+        .leaderboard-table tbody tr:hover {
+            background-color: rgba(167, 139, 250, 0.15); /* Light purple hover effect */
+        }
