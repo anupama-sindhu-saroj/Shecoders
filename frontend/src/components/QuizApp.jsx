@@ -1,4 +1,3 @@
-// src/components/QuizApp.jsx
 import React, { useEffect, useRef, useState } from "react";
 import QuestionCards from "./QuestionCards";
 import ProctorPanel from "./ProctorPanel";
@@ -36,7 +35,7 @@ export default function QuizApp({ testStarted }) {
 
   const { quizId } = useParams();
   const navigate = useNavigate();
-  // -------------------- FETCH QUIZ --------------------
+
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -63,18 +62,17 @@ export default function QuizApp({ testStarted }) {
 
   useEffect(() => {
     if (quiz && quiz.duration) {
-      setTimerSeconds(quiz.duration * 60); // duration is in minutes
+      setTimerSeconds(quiz.duration * 60); 
     }
   }, [quiz]);
-  // Initialize selected answers when quiz loads
+
   useEffect(() => {
     if (quiz && Array.isArray(quiz.questions)) {
       setSelectedAnswers(new Array(quiz.questions.length).fill(null));
     }
   }, [quiz]);
 
-  // -------------------- EFFECTS --------------------
-  // Visibility / blur tracking
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (quizStarted && document.hidden) handleViolation("Switched tab or window not active!");
@@ -92,14 +90,14 @@ export default function QuizApp({ testStarted }) {
     };
   }, [quizStarted]);
 
-  // Fullscreen tracking
+
   useEffect(() => {
     const handleFullscreenChange = () => {
       if (!quizStarted) return;
 
       if (document.fullscreenElement) {
         setSecureStatus("Status: Secure (Fullscreen ON)");
-        fullscreenViolationRef.current = false; // reset
+        fullscreenViolationRef.current = false; 
       } else {
         setSecureStatus("Status: Not Fullscreen");
 
@@ -110,7 +108,7 @@ export default function QuizApp({ testStarted }) {
               handleViolation("Fullscreen mode exited!");
               setShowViolationModal(true);
             }
-          }, 2000); // 2s grace
+          }, 2000);
         }
       }
     };
@@ -119,7 +117,7 @@ export default function QuizApp({ testStarted }) {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, [quizStarted]);
 
-  // Timer & keyboard navigation
+
   useEffect(() => {
     startTimer();
 
@@ -139,7 +137,7 @@ export default function QuizApp({ testStarted }) {
     };
   }, [isPaused]);
 
-  // Double-click fullscreen toggle
+
   useEffect(() => {
     const el = document.getElementById("quiz-card");
     if (!el) return;
@@ -151,7 +149,7 @@ export default function QuizApp({ testStarted }) {
     return () => el.removeEventListener("dblclick", dblclickHandler);
   }, []);
 
-  // -------------------- TIMER --------------------
+
   const startTimer = () => {
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
@@ -179,7 +177,7 @@ export default function QuizApp({ testStarted }) {
       const payload = {
         userId: user._id,
         quizId: quiz._id,
-        answers: answers, // your collected answers
+        answers: answers, 
       };
   
       const res = await axios.post(
@@ -197,7 +195,7 @@ export default function QuizApp({ testStarted }) {
     }
   };
   
-  // -------------------- VIOLATIONS --------------------
+
   const handleViolation = (message) => {
     console.log("Violation:", message);
 
@@ -233,7 +231,7 @@ export default function QuizApp({ testStarted }) {
     }
   };
 
-  // -------------------- QUIZ LOGIC --------------------
+  
   const handleSelect = (optionIndex) => {
     if (isPaused) return;
   
@@ -242,15 +240,14 @@ export default function QuizApp({ testStarted }) {
       updated[currentIndex] = optionIndex;
       return updated;
     });
-  
-    // Update `answers` array for backend submission
+
     setAnswers((prev) => {
       const updated = [...prev];
       const question = quiz.questions[currentIndex];
       updated[currentIndex] = {
         questionId: question._id,
-        selectedOptions: [question.options[optionIndex]], // for single choice
-        // For multiple choice, send array of selected options
+        selectedOptions: [question.options[optionIndex]], 
+
       };
       return updated;
     });
@@ -266,9 +263,9 @@ export default function QuizApp({ testStarted }) {
       let newSelected;
   
       if (existing.includes(option)) {
-        newSelected = existing.filter((o) => o !== option); // unselect
+        newSelected = existing.filter((o) => o !== option); 
       } else {
-        newSelected = [...existing, option]; // select
+        newSelected = [...existing, option]; 
       }
   
       updated[currentIndex] = {
@@ -336,20 +333,20 @@ export default function QuizApp({ testStarted }) {
   };
 
   const handleEndTest = (silent = false) => {
-    // Pause everything
+   
   setIsPaused(true);
   setEndOverlayVisible(true);
   
-  // Stop timer
+  
   if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
 
-  // Submit quiz silently
+  
   handleSubmit(true);
 
-  // Optionally alert
+  
   if (!silent) alert("⚠️ Test ended due to violations. Redirecting to dashboard...");
 
-  // Redirect after 3 seconds
+  
   setTimeout(() => {
     setEndOverlayVisible(false);
     navigate("/dashboard");
@@ -379,7 +376,7 @@ export default function QuizApp({ testStarted }) {
   console.log("Questions:", quiz?.questions);
   console.log("Current index:", currentIndex);
   console.log("Selected answers:", selectedAnswers)
-  // -------------------- RENDER --------------------
+  
   return (
     <div className="relative bg-[#0a0f1e] text-[#d3d7de] font-sans flex flex-col h-screen overflow-hidden">
       <div className="flex flex-col h-screen w-full z-10 relative">
@@ -432,7 +429,7 @@ export default function QuizApp({ testStarted }) {
   <>
     <QuestionCards
       question={quiz.questions[currentIndex]}
-      selected={selectedAnswers[currentIndex] ?? null} // safety check
+      selected={selectedAnswers[currentIndex] ?? null} 
       onSelect={handleSelect}
     />
     <div className="flex justify-between mt-4">
@@ -472,7 +469,7 @@ export default function QuizApp({ testStarted }) {
         onClick={() => {
           document.documentElement.requestFullscreen();
           setShowStartFullscreenModal(false);
-          setQuizStarted(true); // ✅ Start quiz here
+          setQuizStarted(true);
         }}
       >
         Start Test in Fullscreen

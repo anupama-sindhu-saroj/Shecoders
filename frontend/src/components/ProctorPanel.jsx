@@ -12,10 +12,10 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [showInitialPopup, setShowInitialPopup] = useState(true);
 
-  // Cooldown to prevent multiple violations at once
+
   const violationCooldownRef = useRef(false);
 
-  // Capture snapshot utility
+
   const captureSnapshot = (video, label) => {
     if (!video) return;
     const canvas = document.createElement("canvas");
@@ -28,7 +28,7 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
     }, "image/png");
   };
 
-  // Load face-api models
+
   useEffect(() => {
     let mounted = true;
 
@@ -57,11 +57,11 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
     };
   }, []);
 
-  // Hide initial smile popup when test starts or reference face is set
+
   useEffect(() => {
   if (!referenceDescriptorRef.current) {
     startSmileDetection();
-    setShowInitialPopup(true); // show smile popup until reference is stored
+    setShowInitialPopup(true); 
   } else {
     setShowInitialPopup(false);
   }
@@ -77,7 +77,7 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
       videoRef.current.onloadedmetadata = async () => {
         await videoRef.current.play();
 
-        // Capture reference face immediately if test already started
+
         if (testStarted && !referenceDescriptorRef.current) {
           const detection = await faceapi
             .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 }))
@@ -85,7 +85,7 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
             .withFaceDescriptor();
 
           if (detection) {
-            referenceDescriptorRef.current = detection.descriptor; // STORE IT
+            referenceDescriptorRef.current = detection.descriptor; 
             console.log("Reference face captured at start!");
             setShowInitialPopup(false);
             onStartTest?.();
@@ -94,7 +94,7 @@ const ProctorPanel = ({ onStartTest, onEndTest, onViolation,onReadyToStartFullsc
 
         setShowInitialPopup(false);
         startSmileDetection();
-        startMonitoringWhenReady(); // ✅ Wait for reference before monitoring
+        startMonitoringWhenReady(); 
       };
     } catch (err) {
       console.error("Camera error:", err);
@@ -119,7 +119,7 @@ const startSmileDetection = () => {
 
       const { expressions, descriptor } = detection;
 
-      // Set reference face when smile detected
+
       if (expressions.happy > 0.6 && !referenceDescriptorRef.current) {
         referenceDescriptorRef.current = descriptor;
         console.log("Reference face stored via smile!");
@@ -127,8 +127,7 @@ const startSmileDetection = () => {
       
         clearInterval(smileIntervalRef.current);
         setShowInitialPopup(false);
-      
-        // Tell parent: show "start fullscreen" modal
+
         onReadyToStartFullscreen?.();
       
         onStartTest?.();
@@ -139,8 +138,6 @@ const startSmileDetection = () => {
   }, 1000);
 };
 
-
-  // Wait until reference is ready before starting monitoring
   const startMonitoringWhenReady = () => {
     if (!referenceDescriptorRef.current) {
       console.log("Waiting for reference face...");
@@ -187,7 +184,7 @@ const startSmileDetection = () => {
   
           setTimeout(() => {
             violationCooldownRef.current = false;
-          }, 3000); // 3s cooldown
+          }, 3000); 
         }
       } catch (err) {
         console.error("Monitoring error:", err);

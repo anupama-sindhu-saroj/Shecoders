@@ -1,4 +1,3 @@
-// src/components/QuestionCards.jsx
 import React from "react";
 
 export default function QuestionCards({ question, selected, onSelect }) {

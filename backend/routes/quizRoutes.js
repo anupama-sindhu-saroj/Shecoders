@@ -66,7 +66,7 @@ router.get("/public/:id", async (req, res) => {
         .json({ success: false, error: "This quiz has ended. You cannot attempt it." });
     }
 
-    // ✅ Check visibility
+   
     if (quiz.status !== "published" || !quiz.public) {
       return res
         .status(403)
@@ -97,12 +97,12 @@ router.get("/:id", async (req, res) => {
     const quiz = await Quiz.findById(id);
     if (!quiz) return res.status(404).json({ success: false, message: "Quiz not found" });
 
-    // Check if quiz has ended
+    
     if (quiz.endDate && new Date(quiz.endDate) < new Date() && quiz.createdBy.toString() !== userId) {
       return res.status(403).json({ success: false, message: "This quiz has ended. You cannot attempt it." });
     }
 
-    // Only allow access if published or creator
+    
     if (quiz.status !== "published" && quiz.createdBy.toString() !== userId) {
       return res.status(403).json({ success: false, message: "This quiz is private" });
     }
