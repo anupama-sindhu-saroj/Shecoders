@@ -1,32 +1,51 @@
 import express from "express";
-import Submission from "../models/Submission.js"; // Make sure this model matches your collection
-import { protect } from "../middleware/authMiddleware.js";
+import Submission from "../models/Submission.js";
+import Quiz from "../models/Quiz.js";
 
 const router = express.Router();
 
-// GET /api/results?quizId=...&attemptId=...
-router.get("/",  async (req, res) => {
+/**
+ * ✅ GET /api/results
+ * Fetch a submission by quizId and attemptId, along with the quiz data
+ * Query params: quizId, attemptId
+ */
+router.get("/", async (req, res) => {
+  const { quizId, attemptId } = req.query;
+
   try {
-    const { quizId, attemptId } = req.query;
-
+    // Validate inputs
     if (!quizId || !attemptId) {
-      return res.status(400).json({ success: false, error: "quizId and attemptId are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing quizId or attemptId" });
     }
 
-    // Find submission by quizId and _id (attemptId)
-    const submission = await Submission.findOne({ 
-      quizId: quizId, 
-      _id: attemptId 
-    }).populate("quizId").populate("userId", "name email"); // optional population if needed
+    // Fetch the submission
+    const submission = await Submission.findById(attemptId).lean();
+    if (!submission)
+      return res
+        .status(404)
+        .json({ success: false, message: "Submission not found" });
 
-    if (!submission) {
-      return res.status(404).json({ success: false, error: "Result not found" });
-    }
+    // Fetch the quiz
+    const quiz = await Quiz.findById(quizId).lean();
+    if (!quiz)
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found" });
 
-    res.json({ success: true, submission });
+    // Return both
+    return res.json({
+      success: true,
+      message: "Result fetched successfully",
+      submission,
+      quiz,
+    });
   } catch (err) {
-    console.error("Error fetching result:", err);
-    res.status(500).json({ success: false, error: "Server error" });
+    console.error("❌ Error fetching result:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error", error: err.message });
   }
 });
 

@@ -1,49 +1,35 @@
-import mongoose from "mongoose";
+import express from "express";
+import Submission from "../models/Submission.js";
+import Quiz from "../models/Quiz.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
-const resultSchema = new mongoose.Schema(
-  {
-    quiz: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Quiz",
-      required: true,
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    attemptId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    questions: [
-      {
-        id: Number,
-        text: String,
-        chosenAnswer: mongoose.Schema.Types.Mixed,
-        correctAnswer: mongoose.Schema.Types.Mixed,
-        isCorrect: Boolean,
-        timeTaken: Number,
-        marksEarned: Number,
-        maxMarks: Number,
-        explanation: String,
-      },
-    ],
-    totalScore: { type: Number, required: true },
-    maxScore: { type: Number, required: true },
-    correctCount: { type: Number, required: true },
-    wrongCount: { type: Number, required: true },
-    unansweredCount: { type: Number, required: true },
-    timeTakenSeconds: { type: Number, required: true },
-    percentage: { type: Number, required: true },
-    grade: { type: String },
-    isReviewAllowed: { type: Boolean, default: true },
-    quizTitle: { type: String }, // optional: store title for easy access
-  },
-  { timestamps: true }
-);
+const router = express.Router();
 
-const Result = mongoose.model("Result", resultSchema);
+/**
+ * GET /api/results
+ * Fetch a submission by quizId and attemptId, along with the quiz data
+ * Query params: quizId, attemptId
+ */
+router.get("/", authMiddleware, async (req, res) => {
+  const { quizId, attemptId } = req.query;
 
-export default Result;
+  try {
+    // Fetch the submission
+    const submission = await Submission.findById(attemptId).lean();
+    if (!submission)
+      return res.status(404).json({ success: false, message: "Submission not found" });
+
+    // Fetch the quiz
+    const quiz = await Quiz.findById(quizId).lean();
+    if (!quiz)
+      return res.status(404).json({ success: false, message: "Quiz not found" });
+
+    // Return both
+    return res.json({ success: true, submission, quiz });
+  } catch (err) {
+    console.error("Error fetching result:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+export default router;

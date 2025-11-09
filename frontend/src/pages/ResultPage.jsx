@@ -1,112 +1,157 @@
-import React, { useState, useEffect } from 'react';
-
-// Simple inline styles for layout (no Tailwind)
-const styles = {
-  container: { fontFamily: 'sans-serif', background: '#000', color: '#fff', minHeight: '100vh', padding: '20px' },
-  header: { textAlign: 'center', marginBottom: '30px' },
-  title: { fontSize: '32px', fontWeight: 'bold', color: '#4F46E5' },
-  subTitle: { fontSize: '18px', color: '#aaa' },
-  scoreCard: { background: '#111', padding: '20px', borderRadius: '12px', display: 'flex', justifyContent: 'space-around', marginBottom: '20px' },
-  statBox: { background: '#222', padding: '15px', borderRadius: '10px', textAlign: 'center', flex: 1, margin: '0 5px' },
-  statValue: { fontSize: '24px', fontWeight: 'bold' },
-  chartContainer: { width: '150px', height: '150px', borderRadius: '50%', background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' },
-  questionCard: { background: '#111', padding: '15px', marginBottom: '10px', borderRadius: '8px' },
-  correct: { color: '#10B981' },
-  wrong: { color: '#EF4444' },
-  unanswered: { color: '#F59E0B' },
-  button: { padding: '10px 20px', margin: '10px', borderRadius: '8px', border: 'none', cursor: 'pointer' },
-};
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const ResultPage = () => {
-  const [result, setResult] = useState(null);
+  const { quizId, attemptId } = useParams();
+  const navigate = useNavigate();
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchResult = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:5001/api/results?quizId=${quizId}&attemptId=${attemptId}`
-      );
-      const data = await res.json();
-      setResult(data.submission);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching result:', err);
-      setLoading(false);
+    const fetchResult = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5001/api/results?quizId=${quizId}&attemptId=${attemptId}`,
+          { withCredentials: true }
+        );
+        if (res.data.success) setData(res.data);
+        else console.error("No data returned from backend");
+      } catch (err) {
+        console.error("❌ Error fetching result:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResult();
+  }, [quizId, attemptId]);
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-black via-purple-900 to-black text-purple-200">
+        <div className="animate-pulse text-xl">Loading your result...</div>
+      </div>
+    );
+
+  if (!data)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-black via-purple-900 to-black text-purple-300 text-xl">
+        No result found.
+      </div>
+    );
+
+  const { quiz, submission } = data;
+
+  const toOptionTextFromValue = (val, q) => {
+    if (val === null || val === undefined) return "N/A";
+    const n = Number(val);
+    if (!Number.isNaN(n) && Array.isArray(q.options) && q.options[n] !== undefined) {
+      return q.options[n];
     }
+    return val;
   };
-  fetchResult();
-}, [quizId, attemptId]); // re-run if these change
 
-
-  if (loading) return <div style={styles.container}>Loading...</div>;
-  if (!result) return <div style={styles.container}>No result found.</div>;
-
-  const totalQuestions = result.questions.length;
-  const correctCount = result.answers.filter(a => a.isCorrect).length;
-  const wrongCount = result.answers.filter(a => !a.isCorrect && a.chosenOptions.length > 0).length;
-  const unansweredCount = totalQuestions - correctCount - wrongCount;
-
-  const correctPercent = (correctCount / totalQuestions) * 100;
-  const wrongPercent = (wrongCount / totalQuestions) * 100;
-  const unansweredPercent = (unansweredCount / totalQuestions) * 100;
+  const correctCount = submission.answers.filter((a) => a.isCorrect).length;
+  const wrongCount = submission.answers.filter((a) => !a.isCorrect).length;
+  const unansweredCount = quiz.questions.length - submission.answers.length;
 
   return (
-    <div style={styles.container}>
-      {/* Header */}
-      <div style={styles.header}>
-        <h1 style={styles.title}>Quiz Result: {result.quizId.title}</h1>
-        <p style={styles.subTitle}>Attempt ID: {result._id}</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-black via-purple-950 to-black text-purple-100 p-6">
+      <div className="max-w-3xl mx-auto bg-purple-950/30 backdrop-blur-lg border border-purple-700/40 rounded-2xl p-8 shadow-2xl">
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="text-purple-400 hover:text-purple-300 transition mb-6"
+        >
+          ← Back to Dashboard
+        </button>
 
-      {/* Score Card */}
-      <div style={styles.scoreCard}>
-        <div style={styles.statBox}>
-          <div>Total Score</div>
-          <div style={styles.statValue}>{result.totalScore} / {result.maxScore}</div>
-        </div>
-        <div style={styles.chartContainer}>
-          <div>
-            <div style={{ fontSize: '28px', fontWeight: 'bold' }}>{Math.round((correctCount / totalQuestions) * 100)}%</div>
-            <div style={{ fontSize: '12px', color: '#aaa' }}>Accuracy</div>
+        <h1 className="text-4xl font-bold text-purple-300 mb-4">
+          Quiz Result:{" "}
+          <span className="text-white">{quiz.title || "Untitled Quiz"}</span>
+        </h1>
+
+        <div className="text-lg mb-4">
+          <p className="text-gray-300 mb-1">Attempt ID: {submission._id}</p>
+          <p className="font-semibold text-purple-200 mb-2">
+            Total Score:{" "}
+            <span className="text-purple-400">
+              {submission.totalScore}/{submission.maxScore}
+            </span>
+          </p>
+          <div className="flex flex-wrap gap-3 text-sm font-medium">
+            <span className="bg-green-700/40 text-green-300 px-3 py-1 rounded-full">
+              ✅ Correct: {correctCount}
+            </span>
+            <span className="bg-red-700/40 text-red-300 px-3 py-1 rounded-full">
+              ❌ Wrong: {wrongCount}
+            </span>
+            <span className="bg-gray-700/40 text-gray-300 px-3 py-1 rounded-full">
+              ⚪ Unanswered: {unansweredCount}
+            </span>
           </div>
         </div>
-        <div style={styles.statBox}>
-          <div>Grade</div>
-          <div style={styles.statValue}>{result.grade}</div>
-        </div>
-      </div>
 
-      {/* Stats */}
-      <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '20px' }}>
-        <div style={styles.statBox}><div>Correct</div><div style={{...styles.statValue, color: '#10B981'}}>{correctCount}</div></div>
-        <div style={styles.statBox}><div>Wrong</div><div style={{...styles.statValue, color: '#EF4444'}}>{wrongCount}</div></div>
-        <div style={styles.statBox}><div>Unanswered</div><div style={{...styles.statValue, color: '#F59E0B'}}>{unansweredCount}</div></div>
-      </div>
+        <h2 className="text-2xl font-semibold mt-8 mb-4 text-purple-200 border-b border-purple-800 pb-2">
+          Question Review
+        </h2>
 
-      {/* Question Review */}
-      <div>
-        <h2 style={{ fontSize: '20px', marginBottom: '10px' }}>Question Review</h2>
-        {result.questions.map(q => {
-          const status = q.isCorrect ? 'correct' : q.chosenAnswer ? 'wrong' : 'unanswered';
-          const color = status === 'correct' ? styles.correct : status === 'wrong' ? styles.wrong : styles.unanswered;
+        {quiz.questions.map((q, index) => {
+          const ans = submission.answers.find(
+            (a) => a.questionId.toString() === q._id.toString()
+          );
+          const toOption = (v) => toOptionTextFromValue(v, q);
+
+          let userAnswer = "N/A";
+          if (!ans) {
+            userAnswer = "Unanswered";
+          } else if (q.type === "short") {
+            userAnswer = ans.shortAnswer || "N/A";
+          } else if (q.type === "truefalse") {
+            userAnswer =
+              ans.trueFalseValue !== null && ans.trueFalseValue !== undefined
+                ? String(ans.trueFalseValue)
+                : "N/A";
+          } else {
+            userAnswer =
+              (ans.selectedOptions || []).map(toOption).join(", ") || "N/A";
+          }
+
+          let correctAnswer = "N/A";
+          if (q.type === "short") {
+            correctAnswer = q.expectedAnswer || "N/A";
+          } else if (q.type === "truefalse") {
+            correctAnswer =
+              q.trueFalseValue !== null && q.trueFalseValue !== undefined
+                ? String(q.trueFalseValue)
+                : "N/A";
+          } else {
+            correctAnswer =
+              (q.correct || []).map(toOption).join(", ") || "N/A";
+          }
+
+          const statusColor = ans
+            ? ans.isCorrect
+              ? "text-green-400"
+              : "text-red-400"
+            : "text-gray-400";
+
           return (
-            <div key={q.id} style={styles.questionCard}>
-              <div>
-                <strong>Q{q.id}:</strong> {q.text}
-              </div>
-              <div>
-                Your Answer: <span style={color}>{q.chosenAnswer || 'N/A'}</span>
-              </div>
-              {q.isCorrect === false && q.correctAnswer && (
-                <div>
-                  Correct Answer: <span style={{ color: '#3B82F6' }}>{q.correctAnswer}</span>
-                </div>
-              )}
-              {q.explanation && (
-                <div style={{ marginTop: '5px', fontSize: '12px', color: '#aaa' }}>
-                  Explanation: {q.explanation}
-                </div>
+            <div
+              key={q._id}
+              className="bg-black/40 border border-purple-800 rounded-xl p-5 mb-4 hover:shadow-purple-700/40 hover:shadow-md transition"
+            >
+              <h3 className="font-semibold text-lg text-white mb-2">
+                Q{index + 1}: {q.text}
+              </h3>
+              <p className="text-gray-300">
+                Your Answer: <span className={statusColor}>{userAnswer}</span>
+              </p>
+              {!ans?.isCorrect && (
+                <p className="text-gray-400 mt-1">
+                  Correct Answer:{" "}
+                  <span className="text-purple-300">{correctAnswer}</span>
+                </p>
               )}
             </div>
           );

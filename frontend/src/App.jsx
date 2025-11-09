@@ -1,18 +1,24 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+
+// Auth components
 import AuthContainer from "./components/AuthContainer/AuthContainer";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
-import Dashboard from "./pages/Dashboard"; // ✅ Added import
-import LandingPage from './pages/LandingPage';
+
+// Pages
+import LandingPage from "./pages/LandingPage";
+import Dashboard from "./pages/Dashboard";
 import CreateQuiz from "./pages/CreateQuiz";
 import PreviewQuiz from "./pages/PreviewQuiz";
 import QuizAnalytics from "./pages/QuizAnalytics";
 import ResultPage from "./pages/ResultPage";
-import QuizApp from "./components/QuizApp.jsx";
-import Myapp from "./Myapp.jsx";
-import ResultPage from "./components/ResultPage.jsx";
+
+// Quiz components
+import Myapp from "./Myapp.jsx"; // Quiz overview
+import QuizApp from "./components/QuizApp.jsx"; // Quiz attempt page
+
 import "./index.css";
 
 function App() {
@@ -20,22 +26,29 @@ function App() {
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
       <Router>
         <Routes>
-         <Route path="/" element={<LandingPage />} />
+          {/* Landing / Home */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* Authentication */}
           <Route path="/auth" element={<AuthContainer />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-           <Route path="/create-quiz" element={<CreateQuiz />} />
-           
-           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/quiz/:quizId" element={<Myapp />} />
-          <Route path="/quiz/:quizId/attempt" element={<QuizApp />} />
-          <Route path="/result" element={<ResultPage />} />
-          <Route path="/preview" element={<PreviewQuiz />} />
-          <Route path="/analytics/:quizId" element={<QuizAnalytics />} />
-          <Route path="/result/:quizId/:attemptId" element={<ResultPage />} />
-          
 
+          {/* Dashboard and Quiz Management */}
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create-quiz" element={<CreateQuiz />} />
+          <Route path="/preview" element={<PreviewQuiz />} />
+
+          {/* Quiz Routes */}
+          <Route path="/quiz/:quizId" element={<Myapp />} /> {/* Quiz overview */}
+          <Route path="/quiz/:quizId/attempt" element={<QuizApp />} /> {/* Take quiz */}
+
+          {/* Analytics */}
+          <Route path="/analytics/:quizId" element={<QuizAnalytics />} />
+
+          {/* Result page - dynamic */}
+          <Route path="/result/:quizId/:attemptId" element={<ResultPage />} />
+         
         </Routes>
       </Router>
     </GoogleOAuthProvider>

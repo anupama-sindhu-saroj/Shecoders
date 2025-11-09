@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
-import { useSearchParams } from "react-router-dom";
-import { getQuizById } from "../services/quizService";
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("myQuizzes");
@@ -11,8 +9,10 @@ const Dashboard = () => {
   const [quizCode, setQuizCode] = useState("");
   const [attemptedQuizzes, setAttemptedQuizzes] = useState([]);
   const navigate = useNavigate();
+
   const totalAttempts = attemptedQuizzes.length;
-  // ✅ Fetch quizzes when page loads
+
+  // Fetch quizzes created by the logged-in user
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
@@ -28,47 +28,42 @@ const Dashboard = () => {
     };
     fetchQuizzes();
   }, []);
+
+  // Fetch quiz attempts for the logged-in user
   useEffect(() => {
     const fetchAttempts = async () => {
       const token = localStorage.getItem("token");
       const user = JSON.parse(localStorage.getItem("user"));
-      const userId = user?._id; // safely get the ID
-      console.log("Frontend userId:", userId);
+      const userId = user?._id;
       if (!userId) return;
-  
-      const res = await fetch(`http://localhost:5001/api/submissions/user/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      const data = await res.json();
-      console.log("Submissions fetched:", data); 
-      setAttemptedQuizzes(Array.isArray(data) ? data : []);
+
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/submissions/user/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const data = await res.json();
+        setAttemptedQuizzes(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("❌ Failed to fetch user attempts:", error);
+      }
     };
-  
+
     fetchAttempts();
   }, []);
-  
-  useEffect(() => {
-    console.log("attemptedQuizzes:", attemptedQuizzes);
-  }, [attemptedQuizzes]);
-  
+
   const handleJoinQuiz = () => {
     if (!quizCode) return alert("Enter quiz ID or code!");
-  
-    // If user pasted full URL, extract the ID
-    const id = quizCode.includes("http")
-      ? quizCode.split("/").pop() // take last part of URL
-      : quizCode;
-  
+    const id = quizCode.includes("http") ? quizCode.split("/").pop() : quizCode;
     navigate(`/quiz/${id}`);
   };
-  // ✅ Separate quizzes into Drafts and Published
+
   const drafts = quizzes.filter((q) => q.status === "draft");
   const published = quizzes.filter((q) => q.status === "published");
 
   return (
     <div className="dashboard-container">
-      {/* 🧭 Header Navigation */}
+      {/* Header Navigation */}
       <header className="dashboard-header">
         <nav className="quiz-nav">
           <button
@@ -78,9 +73,7 @@ const Dashboard = () => {
             My Quizzes
           </button>
           <button
-            className={`nav-tab ${
-              activeTab === "attemptedQuizzes" ? "active" : ""
-            }`}
+            className={`nav-tab ${activeTab === "attemptedQuizzes" ? "active" : ""}`}
             onClick={() => setActiveTab("attemptedQuizzes")}
           >
             Attempted Quizzes
@@ -94,20 +87,15 @@ const Dashboard = () => {
           >
             + Create New Quiz
           </button>
-          <button
-            className="action-btn join-quiz-btn"
-            onClick={() => setShowModal(true)}
-          >
+          <button className="action-btn join-quiz-btn" onClick={() => setShowModal(true)}>
             Join Quiz
           </button>
         </div>
       </header>
 
-      {/* 📋 Main Dashboard */}
+      {/* Main Dashboard */}
       <main className="dashboard-main">
-        {/* ============================
-            TAB 1: MY QUIZZES SECTION
-        ============================ */}
+        {/* My Quizzes Tab */}
         {activeTab === "myQuizzes" && (
           <section className="quiz-content-section active-section">
             <h1 className="section-title">My Quizzes</h1>
@@ -116,17 +104,10 @@ const Dashboard = () => {
               <div className="quiz-card summary-card">
                 <span className="icon-placeholder"></span>
                 <h3>Activity Summary</h3>
-                <p>
-                  Total Quizzes: <strong>{quizzes.length}</strong>
-                </p>
-                <p>
-                  Total Attempts: <strong>{totalAttempts}</strong>
-                </p>
+                <p>Total Quizzes: <strong>{quizzes.length}</strong></p>
+                <p>Total Attempts: <strong>{totalAttempts}</strong></p>
               </div>
 
-              {/* ==============================
-                  DRAFT QUIZZES SECTION
-              ============================== */}
               {drafts.length > 0 && (
                 <>
                   <h2 style={{ color: "#00eaff", marginTop: "30px" }}>Drafts</h2>
@@ -151,9 +132,6 @@ const Dashboard = () => {
                 </>
               )}
 
-              {/* ==============================
-                  PUBLISHED QUIZZES SECTION
-              ============================== */}
               {published.length > 0 && (
                 <>
                   <h2 style={{ color: "#00ff88", marginTop: "30px" }}>Published</h2>
@@ -182,82 +160,62 @@ const Dashboard = () => {
                 </>
               )}
 
-              {/* ✅ Empty State */}
               {drafts.length === 0 && published.length === 0 && (
                 <p style={{ color: "#aaa", marginTop: "20px" }}>
-                  You haven’t created any quizzes yet. Click “+ Create New Quiz”
-                  to start.
+                  You haven’t created any quizzes yet. Click “+ Create New Quiz” to start.
                 </p>
               )}
             </div>
           </section>
         )}
 
-        {/* ============================
-            TAB 2: ATTEMPTED QUIZZES SECTION
-        ============================ */}
+        {/* Attempted Quizzes Tab */}
         {activeTab === "attemptedQuizzes" && (
           <section className="quiz-content-section">
             <h1 className="section-title">Attempted Quizzes</h1>
             <div className="summary-and-cards">
               <div className="quiz-card attempted-summary">
                 <h3>Attempt Stats</h3>
-                <p>
-                  Quizzes Completed: <strong>5</strong>
-                </p>
-                <p>
-                  Highest Score: <strong>95%</strong>
-                </p>
+                <p>Quizzes Completed: <strong>{attemptedQuizzes.length}</strong></p>
               </div>
 
               {attemptedQuizzes.length > 0 ? (
-  attemptedQuizzes.map(sub => {
-    const quiz = sub.quizId;
-    return (
-      <div className="quiz-card attempted-card" key={sub._id}>
-        <h3>{quiz?.title || "Deleted Quiz"}</h3>
-        <div className="stats">
-          <p>
-            Your Score: 
-            <strong>
-              {sub.totalScore}/{sub.maxScore} (
-              {sub.maxScore ? Math.round((sub.totalScore / sub.maxScore) * 100) : 0}%)
-            </strong>
-          </p>
-          <p>Attempt Date: {new Date(sub.submittedAt).toLocaleDateString()}</p>
-        </div>
-        <span className="status attempted-success">Completed</span>
-        <div className="card-actions">
-          <button
-            className="card-btn analytics-btn"
-            onClick={() => navigate(`/results/${sub._id}`)}
-          >
-            View Report
-          </button>
-        </div>
-      </div>
-    );
-  })
-  
-) : (
-  <p>No quizzes attempted yet.</p>
-)}
-
-
-
-
+                attemptedQuizzes.map((sub) => {
+                  const quiz = sub.quizId;
+                  return (
+                    <div className="quiz-card attempted-card" key={sub._id}>
+                      <h3>{quiz?.title || "Deleted Quiz"}</h3>
+                      <div className="stats">
+                        <p>
+                          Your Score: <strong>{sub.totalScore}/{sub.maxScore} (
+                          {sub.maxScore ? Math.round((sub.totalScore / sub.maxScore) * 100) : 0}%)</strong>
+                        </p>
+                        <p>Attempt Date: {new Date(sub.submittedAt).toLocaleDateString()}</p>
+                      </div>
+                      <span className="status attempted-success">Completed</span>
+                      <div className="card-actions">
+                        <button
+                          className="card-btn analytics-btn"
+                          onClick={() => navigate(`/result/${quiz._id}/${sub._id}`)}
+                        >
+                          View Report
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p>No quizzes attempted yet.</p>
+              )}
             </div>
           </section>
         )}
       </main>
 
-      {/* 🔗 Join Quiz Modal */}
+      {/* Join Quiz Modal */}
       {showModal && (
         <div className="modal" onClick={() => setShowModal(false)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <span className="close" onClick={() => setShowModal(false)}>
               &times;
             </span>
@@ -271,7 +229,6 @@ const Dashboard = () => {
               onChange={(e) => setQuizCode(e.target.value)}
             />
             <button className="submit-url-btn" onClick={handleJoinQuiz}>Join Now</button>
-
           </div>
         </div>
       )}
